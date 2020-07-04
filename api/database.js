@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'); //Libreria de JS que me permite unir Node con MongoDb y crear los esquemas
 
-const URI = `mongodb://localhost:27017/microaliados`; //Ruta de conexion a la BD
+const URI = process.env.DB_URI; //Ruta de conexion a la BD
 mongoose
   .connect(URI, {
     useNewUrlParser: true,
