@@ -44,7 +44,7 @@ productoController.crearProducto = async (req, res, next) => {
       cantidad: req.body.cantidad,
     };
     const producto = new productoModel(data);
-    const resultado = await producto.save();
+    await producto.save();
     res.status(200).json({
       status: 'Success',
       message: 'Producto insertado correctamente',
@@ -62,7 +62,7 @@ productoController.editarProductoByReference = async (req, res, next) => {
       precioUnitario: req.body.precioUnitario,
       cantidad: req.body.cantidad,
     };
-    const productoActualizado = await productoModel.findOneAndUpdate(
+    await productoModel.findOneAndUpdate(
       { codigoReferencia: codigoReferencia },
       { $set: data },
       {
@@ -80,7 +80,7 @@ productoController.editarProductoByReference = async (req, res, next) => {
 productoController.eliminarProductoByReference = async (req, res, next) => {
   try {
     const codigoReferencia = req.params.id;
-    const resultado = await productoModel.findOneAndUpdate(
+    await productoModel.findOneAndUpdate(
       { codigoReferencia: codigoReferencia },
       { estado: false },
       { new: true }
