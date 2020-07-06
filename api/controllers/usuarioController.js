@@ -63,4 +63,25 @@ usuarioController.iniciarSesion = async (req, res, next) => {
     next(error);
   }
 };
+usuarioController.consultarUsuariosByCodigo = async (req, res, next) => {
+  try {
+    const codigoUsuario = req.params.id;
+    const resultado = await usuarioModel.findOne({ codigo: codigoUsuario });
+    res.status(200).json({
+      resultado,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+usuarioController.consultarUsuarios = async (req, res, next) => {
+  try {
+    const resultado = await usuarioModel.find();
+    res.status(200).json({
+      resultado,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = usuarioController;
