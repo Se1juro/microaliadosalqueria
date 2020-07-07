@@ -22,9 +22,9 @@ usuarioController.registrarUsusario = async (req, res, next) => {
     );
     nuevoUsuario.password = passwordHash;
     await nuevoUsuario.save();
-    res.status(200).json({
+    return res.status(200).json({
       status: 'Success',
-      message: 'Usuario registrado con exito',
+      mensaje: 'Registro exitoso',
     });
   } catch (error) {
     next(error);
@@ -37,8 +37,7 @@ usuarioController.iniciarSesion = async (req, res, next) => {
     if (!usuario) {
       return res.status(409).json({
         status: 'Error',
-        message:
-          'El usuario no existe, comuniquese con el administrador del sistema',
+        mensaje: 'El usuario no existe, comunicate con el administrador',
       });
     }
     const matchPassword = await bcrypt.compare(
@@ -55,7 +54,7 @@ usuarioController.iniciarSesion = async (req, res, next) => {
     } else {
       return res.status(409).json({
         status: 'Error',
-        message:
+        mensaje:
           'Hubo un error en el inicio de sesion, comunicate con el administrador',
       });
     }
@@ -67,7 +66,7 @@ usuarioController.consultarUsuariosByCodigo = async (req, res, next) => {
   try {
     const codigoUsuario = req.params.id;
     const resultado = await usuarioModel.findOne({ codigo: codigoUsuario });
-    res.status(200).json({
+    return res.status(200).json({
       resultado,
     });
   } catch (error) {
@@ -77,9 +76,67 @@ usuarioController.consultarUsuariosByCodigo = async (req, res, next) => {
 usuarioController.consultarUsuarios = async (req, res, next) => {
   try {
     const resultado = await usuarioModel.find();
-    res.status(200).json({
+    return res.status(200).json({
       resultado,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+usuarioController.makeMicroaliado = async (req, res, next) => {
+  try {
+    const codigoUsuario = req.params.id;
+    const usuario = await usuarioModel.find({ codigo: codigoUsuario });
+    if (usuario < 1) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'No se encontro al usuario',
+      });
+    } else {
+      await usuarioModel.findOneAndUpdate(
+        { codigo: codigoUsuario },
+        { rol: 'microaliado' },
+        { new: true }
+      );
+      return res.status(200).json({
+        status: 'Success',
+        mensaje: 'Modificado con exito',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+usuarioController.asignarMicroaliadoToVendedor = async (req, res, next) => {
+  try {
+    const codigoUsuario = req.params.id;
+    const codigoMicroaliado = req.body.codigo;
+    const usuario = await usuarioModel.findOne({ codigo: codigoUsuario });
+    const microaliado = await usuarioModel.findOne({
+      codigo: codigoMicroaliado,
+    });
+    if (usuario.rol === 'microaliado') {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'No puedes asignarle un microaliado a otro microaliado',
+      });
+    } else {
+      if (microaliado.rol !== 'microaliado') {
+        return res.status(409).json({
+          status: 'Error',
+          mensaje:
+            'El usuario no es un microaliado, no puedes asignarle un vendedor',
+        });
+      }
+      await usuarioModel.findOneAndUpdate(
+        { codigo: codigoUsuario },
+        { $set: { codigoMicroaliadoEncargado: codigoMicroaliado } }
+      );
+      res.status(200).json({
+        status: 'Success',
+        mensaje: 'Modificacion exitosa',
+      });
+    }
   } catch (error) {
     next(error);
   }

@@ -7,6 +7,7 @@ const usuarioSchema = new Schema(
       type: Number,
       minlength: 9,
       maxlength: 9,
+      required: true,
     },
     password: {
       type: String,
@@ -37,6 +38,15 @@ const usuarioSchema = new Schema(
     telefono: {
       type: String,
       required: true,
+    },
+    rol: {
+      type: String,
+      required: true,
+      enum: ['admin', 'microaliado', 'vendedor'],
+      default: 'vendedor',
+    },
+    codigoMicroaliadoEncargado: {
+      type: Number,
     },
   },
   {

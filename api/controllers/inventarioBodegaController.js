@@ -1,12 +1,14 @@
-const inventarioModel = require('../models/inventarioBodegaModel');
+const inventarioModel = require('../models/inventarioModel');
 const productoModel = require('../models/productoModel');
 const inventarioController = {};
 
-inventarioController.getInventarioById = async (req, res, next) => {
+inventarioController.getInventarioByUser = async (req, res, next) => {
   try {
-    const idInventario = req.params.id;
-    const inventario = await inventarioModel.findById(idInventario);
-    const mapProducts = inventario.productos;
+    const codigoUsuario = req.params.id;
+    const inventario = await inventarioModel.find({
+      codigoUsuario: codigoUsuario,
+    });
+    const mapProducts = inventario[0].productos;
     const productosArray = [];
     mapProducts.forEach((element) => {
       productosArray.push(element.id);
@@ -69,6 +71,41 @@ inventarioController.eliminarProductoInventario = async (req, res, next) => {
       productosToEliminar,
       status: 'Success',
       message: 'Producto eliminado correctamente',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+inventarioController.restarCantidadProducto = async (req, res, next) => {
+  try {
+    const codigoUsuario = req.params.id;
+    let nuevaCantidad = 0;
+    const data = {
+      codigoProducto: req.body.codigoProducto,
+      cantidad: req.body.cantidad,
+    };
+    const inventario = await inventarioModel.findOne({
+      codigoUsuario: codigoUsuario,
+    });
+    console.log(data);
+    for (const key of inventario.productos) {
+      console.log(key.id);
+      if (data.codigoProducto === key.id) {
+        nuevaCantidad = key.cantidad - data.cantidad;
+        console.log(nuevaCantidad);
+      }
+    }
+    const resultado = await inventarioModel.findOneAndUpdate(
+      {
+        codigoUsuario: codigoUsuario,
+        'productos.id': data.codigoProducto,
+      },
+      { $inc: { 'productos.$.cantidad': -data.cantidad } }
+    );
+    res.status(200).json({
+      status: 'Success',
+      mensaje: 'Se ha restado a la cantidad del producto en tu inventario',
+      resultado,
     });
   } catch (error) {
     next(error);

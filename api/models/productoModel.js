@@ -12,9 +12,8 @@ const productSchema = new Schema(
       required: true,
     },
     aplicaIva: {
-      type: String,
+      type: Boolean,
       required: true,
-      enum: ['si', 'no'],
     },
     precioUnitario: {
       type: Number,
