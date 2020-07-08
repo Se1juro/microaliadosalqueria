@@ -32,7 +32,17 @@ inventarioController.crearInventario = async (req, res, next) => {
     const inventarioExistente = await inventarioModel.findOne({
       codigoUsuario: data.codigoUsuario,
     });
+
     if (inventarioExistente) {
+      for (const key of inventarioExistente.productos) {
+        if (key.id === data.productos.id) {
+          return res.status(409).json({
+            status: 'Error',
+            mensaje:
+              'Ya tienes un producto de la misma referencia en tu inventario',
+          });
+        }
+      }
       const resultado = await inventarioModel.findOneAndUpdate(
         { codigoUsuario: data.codigoUsuario },
         {
@@ -79,20 +89,29 @@ inventarioController.eliminarProductoInventario = async (req, res, next) => {
 inventarioController.restarCantidadProducto = async (req, res, next) => {
   try {
     const codigoUsuario = req.params.id;
-    let nuevaCantidad = 0;
     const data = {
       codigoProducto: req.body.codigoProducto,
       cantidad: req.body.cantidad,
     };
     const inventario = await inventarioModel.findOne({
       codigoUsuario: codigoUsuario,
+      'productos.id': data.codigoProducto,
     });
-    console.log(data);
+    if (!inventario) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'No dispone de este producto en su inventario',
+      });
+    }
     for (const key of inventario.productos) {
-      console.log(key.id);
-      if (data.codigoProducto === key.id) {
-        nuevaCantidad = key.cantidad - data.cantidad;
-        console.log(nuevaCantidad);
+      if (key.id === data.codigoProducto) {
+        if (key.cantidad < data.cantidad) {
+          return res.status(409).json({
+            status: 'Error',
+            mensaje:
+              'No puede eliminar mas cantidad de la que tiene en el stock',
+          });
+        }
       }
     }
     const resultado = await inventarioModel.findOneAndUpdate(
