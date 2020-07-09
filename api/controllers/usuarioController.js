@@ -1,7 +1,7 @@
 const usuarioModel = require('../models/usuarioModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const secretKey = 'DvTGB0esek4s';
+const secretKey = process.env.SECRETKEY;
 const usuarioController = {};
 const BCRYPT_SALT_ROUNDS = 12;
 usuarioController.registrarUsusario = async (req, res, next) => {
@@ -39,24 +39,25 @@ usuarioController.iniciarSesion = async (req, res, next) => {
         status: 'Error',
         mensaje: 'El usuario no existe, comunicate con el administrador',
       });
-    }
-    const matchPassword = await bcrypt.compare(
-      req.body.password,
-      usuario.password
-    );
-    if (matchPassword) {
-      const datosToLocalStorage = {
-        id: usuario._id,
-        codigoReferencia: usuario.codigo,
-      };
-      const token = jwt.sign(datosToLocalStorage, secretKey);
-      return res.status(200).json({ datosToLocalStorage, token });
     } else {
-      return res.status(409).json({
-        status: 'Error',
-        mensaje:
-          'Hubo un error en el inicio de sesion, comunicate con el administrador',
-      });
+      const matchPassword = await bcrypt.compare(
+        req.body.password,
+        usuario.password
+      );
+      if (matchPassword) {
+        const datosToLocalStorage = {
+          id: usuario._id,
+          codigoReferencia: usuario.codigo,
+        };
+        const token = jwt.sign(datosToLocalStorage, secretKey);
+        return res.status(200).json({ datosToLocalStorage, token });
+      } else {
+        return res.status(409).json({
+          status: 'Error',
+          mensaje:
+            'Hubo un error en el inicio de sesion, comunicate con el administrador',
+        });
+      }
     }
   } catch (error) {
     next(error);

@@ -1,5 +1,4 @@
 const distribucionModel = require('../models/distribucionModel');
-const productoModel = require('../models/productoModel');
 const inventarioModel = require('../models/inventarioModel');
 const inventarioVendedorController = {};
 inventarioVendedorController.moveToDistribution = async (req, res, next) => {
@@ -12,54 +11,97 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
     };
     const inventarioOfMicroaliado = await inventarioModel.findOne({
       _id: data.codigoInventario,
-      'productos.id': data.productos.id,
     });
     if (!inventarioOfMicroaliado) {
       return res.status(409).json({
         status: 'Error',
         mensaje: 'No existe inventario para empezar la distribucion',
       });
-    }
-    //data.productos.cantidadInventario=inventarioOfMicroaliado.productos;
-    if (inventarioOfMicroaliado) {
+    } else {
+      let valorObjeto;
+      let cantidadInventario;
       for (const iterator of inventarioOfMicroaliado.productos) {
-        const valorObjeto = Object.values(data.productos);
+        valorObjeto = Object.values(data.productos);
         if (valorObjeto[0] === iterator.id) {
           data.productos.cantidadInventario = iterator.cantidad;
         }
       }
-      await inventarioModel.findOneAndUpdate(
-        {
-          _id: data.codigoInventario,
-          'productos.id': data.productos.id,
-        },
-        { $inc: { 'productos.$.cantidad': -data.productos.cantidad } }
+      const distribucionActiva = await distribucionModel.findOne({
+        codigoUsuario: data.codigoUsuario,
+      });
+      const newInventario = await inventarioModel.findById(
+        data.codigoInventario
       );
-    }
-    const distribucionActiva = await distribucionModel.findOne({
-      codigoUsuario: data.codigoUsuario,
-    });
-    if (distribucionActiva) {
-      await distribucionModel.findOneAndUpdate(
-        { codigoUsuario: data.codigoUsuario },
-        {
-          $push: {
-            productos: data.productos,
-          },
-          $set: { cantidadInventario: data.productos.cantidadInventario },
+      let idDistribucion;
+      if (distribucionActiva) {
+        for (const uwu of newInventario.productos) {
+          if (uwu.id === data.productos.id) {
+            cantidadInventario = uwu.cantidad;
+          }
         }
-      );
-      return res.status(200).json({
-        status: 'Success',
-        mensaje: 'Se ha añadido el producto a distribucion',
-      });
-    } else {
-      const salidaDistribucion = new distribucionModel(data);
-      await salidaDistribucion.save();
-      return res.status(200).json({
-        status: 'Success',
-        mensaje: 'Guardado con exito',
-      });
+        if (cantidadInventario === undefined || cantidadInventario === 0) {
+          return res.status(409).json({
+            status: 'Error',
+            mensaje:
+              'Al parecer el producto no esta en el inventario o no tiene sotck',
+          });
+        }
+        for (const product of distribucionActiva.productos) {
+          idDistribucion = product.id;
+        }
+        if (idDistribucion === data.productos.id) {
+          console.log('Hola');
+          await distribucionModel.findOneAndUpdate(
+            {
+              codigoInventario: data.codigoInventario,
+              'productos.id': data.productos.id,
+            },
+            {
+              $set: {
+                'productos.$.cantidadInventario':
+                  cantidadInventario - data.productos.cantidad,
+              },
+              $inc: { 'productos.$.cantidad': data.productos.cantidad },
+            },
+            {
+              new: true,
+            }
+          );
+          await inventarioModel.findOneAndUpdate(
+            {
+              _id: data.codigoInventario,
+              'productos.id': data.productos.id,
+            },
+            { $inc: { 'productos.$.cantidad': -data.productos.cantidad } }
+          );
+          return res.status(200).json({
+            status: 'Success',
+            mensaje: 'Distribucion actualizada',
+          });
+        } else {
+          await distribucionModel.findOneAndUpdate(
+            {
+              codigoInventario: data.codigoInventario,
+            },
+            {
+              $push: {
+                productos: data.productos,
+              },
+            }
+          );
+          return res.status(200).json({
+            status: 'Success',
+            mensaje: 'Distribucion actualizada',
+          });
+        }
+      } else {
+        const salidaDistribucion = new distribucionModel(data);
+        await salidaDistribucion.save();
+        return res.status(200).json({
+          status: 'Success',
+          mensaje: 'Guardado con exito',
+        });
+      }
     }
   } catch (error) {
     next(error);
@@ -80,35 +122,34 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
     });
     for (const key of data.productos) {
       for (const iterator of distribucionActual.productos) {
-        if (iterator.id !== key.id) {
-          return res.status(409).json({
-            status: 'Error',
-            mensaje:
-              'No puedes devolver un producto que no sacaste a distribucion',
+        if (key.id === iterator.id) {
+          for (const i of inventario.productos) {
+            if (i.id === key.id) {
+              let cantidadExcepcion = i.cantidad + key.cantidad;
+              if (cantidadExcepcion > iterator.cantidadInventario) {
+                return res.status(409).json({
+                  status: 'Error',
+                  mensaje: 'Ya devolviste estos productos',
+                });
+              }
+            }
+          }
+        }
+        if (iterator.id === key.id) {
+          await inventarioModel.findOneAndUpdate(
+            {
+              codigoUsuario: data.codigoUsuario,
+              'productos.id': key.id,
+            },
+            { $inc: { 'productos.$.cantidad': key.cantidad } }
+          );
+          return res.status(200).json({
+            status: 'Success',
+            mensaje: 'Distribucion finalizada',
           });
         }
       }
-      for (const i of inventario.productos) {
-        if (key.cantidad > i.cantidad) {
-          return res.status(409).json({
-            status: 'Error',
-            mensaje:
-              'No puedes devolver mas productos de los que habia anteriormente',
-          });
-        }
-      }
-      await inventarioModel.findOneAndUpdate(
-        {
-          codigoUsuario: data.codigoUsuario,
-          'productos.id': key.id,
-        },
-        { $inc: { 'productos.$.cantidad': key.cantidad } }
-      );
     }
-    return res.status(200).json({
-      status: 'Success',
-      mensaje: 'Distribucion finalizada',
-    });
   } catch (error) {
     next(error);
   }

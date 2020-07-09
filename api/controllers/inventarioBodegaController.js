@@ -1,5 +1,6 @@
 const inventarioModel = require('../models/inventarioModel');
 const productoModel = require('../models/productoModel');
+const distribucionModel = require('../models/distribucionModel');
 const inventarioController = {};
 
 inventarioController.getInventarioByUser = async (req, res, next) => {
@@ -51,6 +52,7 @@ inventarioController.crearInventario = async (req, res, next) => {
           },
         }
       );
+
       return res.status(200).json({
         resultado,
         status: 'Success',
@@ -126,6 +128,58 @@ inventarioController.restarCantidadProducto = async (req, res, next) => {
       mensaje: 'Se ha restado a la cantidad del producto en tu inventario',
       resultado,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+inventarioController.aumentarExistencia = async (req, res, next) => {
+  try {
+    const codigoInventario = req.params.id;
+    const data = {
+      productos: req.body.productos,
+    };
+    const inventario = await inventarioModel.findById(codigoInventario);
+    if (!inventario) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'No se encuentra el inventario',
+      });
+    } else {
+      for (const key of inventario.productos) {
+        for (const iterator of data.productos) {
+          if (key.id === iterator.id) {
+            await inventarioModel.findOneAndUpdate(
+              {
+                _id: codigoInventario,
+                'productos.id': iterator.id,
+              },
+              {
+                $inc: { 'productos.$.cantidad': iterator.cantidad },
+              }
+            );
+            await distribucionModel.findOneAndUpdate(
+              {
+                codigoInventario: codigoInventario,
+                'productos.id': key.id,
+              },
+              {
+                $set: {
+                  'productos.$.cantidadInventario':
+                    key.cantidad + iterator.cantidad,
+                },
+              },
+              {
+                new: true,
+              }
+            );
+          }
+        }
+      }
+      return res.status(200).json({
+        status: 'Success',
+        mensaje: 'Inventario actualizado con exito',
+      });
+    }
   } catch (error) {
     next(error);
   }
