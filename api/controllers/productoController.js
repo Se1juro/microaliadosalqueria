@@ -39,10 +39,19 @@ productoController.crearProducto = async (req, res, next) => {
     const data = {
       codigoReferencia: req.body.codigoReferencia,
       descripcion: req.body.descripcion,
-      aplicaIva: req.body.iva,
+      aplicaIva: req.body.aplicaIva,
       precioUnitario: req.body.precioUnitario,
       cantidad: req.body.cantidad,
     };
+    const comparativaProductos = await productoModel.findOne({
+      codigoReferencia: data.codigoReferencia,
+    });
+    if (comparativaProductos) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'Ya existe un producto con esta referencia',
+      });
+    }
     const producto = new productoModel(data);
     await producto.save();
     res.status(200).json({
@@ -56,12 +65,33 @@ productoController.crearProducto = async (req, res, next) => {
 productoController.editarProductoByReference = async (req, res, next) => {
   try {
     const codigoReferencia = req.params.id;
+    let contador = 0;
     const data = {
       descripcion: req.body.descripcion,
       aplicaIva: req.body.iva,
       precioUnitario: req.body.precioUnitario,
+      aplicaIva: req.body.aplicaIva,
       cantidad: req.body.cantidad,
     };
+    for (const iterator of Object.values(req.body)) {
+      contador++;
+    }
+    //El numero de campos que debe tener el cuerpo del body para editar un producto debe ser de 5, si es menor a este numero, faltan datos.
+    if (contador < 5) {
+      return res.status(409).json({
+        status: 'Error',
+        message: 'Faltan campos para poder edita el producto',
+      });
+    }
+    const producto = await productoModel.findOne({
+      codigoReferencia: codigoReferencia,
+    });
+    if (!producto) {
+      return res.status(409).json({
+        status: 'Error',
+        message: 'No se ha encontrado el producto',
+      });
+    }
     await productoModel.findOneAndUpdate(
       { codigoReferencia: codigoReferencia },
       { $set: data },
@@ -80,10 +110,34 @@ productoController.editarProductoByReference = async (req, res, next) => {
 productoController.eliminarProductoByReference = async (req, res, next) => {
   try {
     const codigoReferencia = req.params.id;
+    const producto = await productoModel.findOne({
+      codigoReferencia: codigoReferencia,
+    });
+    if (!producto) {
+      return res.status(409).json({
+        status: 'Error',
+        message: 'El producto que esta intentando eliminar no existe.',
+      });
+    }
+    if (producto.estado === false) {
+      return res.status(409).json({
+        status: 'Error',
+        message: 'El producto que esta intentando eliminar esta deshabilitado.',
+      });
+    }
     await productoModel.findOneAndUpdate(
       { codigoReferencia: codigoReferencia },
       { estado: false },
-      { new: true }
+      { new: true },
+      (err, doc) => {
+        if (err) {
+          return res.status(409).json({
+            status: 'Error',
+            message:
+              'Hubo un error con la eliminacion del producto, comunique al administrador',
+          });
+        }
+      }
     );
     return res.status(200).json({
       status: 'success',

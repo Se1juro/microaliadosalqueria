@@ -113,30 +113,43 @@ usuarioController.asignarMicroaliadoToVendedor = async (req, res, next) => {
     const codigoUsuario = req.params.id;
     const codigoMicroaliado = req.body.codigo;
     const usuario = await usuarioModel.findOne({ codigo: codigoUsuario });
+    if (!usuario) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'No existe este usuario',
+      });
+    }
     const microaliado = await usuarioModel.findOne({
       codigo: codigoMicroaliado,
     });
-    if (usuario.rol === 'microaliado') {
+    if (!microaliado) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'No puedes asignarle un microaliado a otro microaliado',
+        mensaje: 'No existe este microaliado',
       });
     } else {
-      if (microaliado.rol !== 'microaliado') {
+      if (usuario.rol === 'microaliado') {
         return res.status(409).json({
           status: 'Error',
-          mensaje:
-            'El usuario no es un microaliado, no puedes asignarle un vendedor',
+          mensaje: 'No puedes asignarle un microaliado a otro microaliado',
+        });
+      } else {
+        if (microaliado.rol !== 'microaliado') {
+          return res.status(409).json({
+            status: 'Error',
+            mensaje:
+              'El usuario no es un microaliado, no puedes asignarle un vendedor',
+          });
+        }
+        await usuarioModel.findOneAndUpdate(
+          { codigo: codigoUsuario },
+          { $set: { codigoMicroaliadoEncargado: codigoMicroaliado } }
+        );
+        res.status(200).json({
+          status: 'Success',
+          mensaje: 'Modificacion exitosa',
         });
       }
-      await usuarioModel.findOneAndUpdate(
-        { codigo: codigoUsuario },
-        { $set: { codigoMicroaliadoEncargado: codigoMicroaliado } }
-      );
-      res.status(200).json({
-        status: 'Success',
-        mensaje: 'Modificacion exitosa',
-      });
     }
   } catch (error) {
     next(error);
