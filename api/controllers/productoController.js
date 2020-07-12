@@ -41,7 +41,6 @@ productoController.crearProducto = async (req, res, next) => {
       descripcion: req.body.descripcion,
       aplicaIva: req.body.aplicaIva,
       precioUnitario: req.body.precioUnitario,
-      cantidad: req.body.cantidad,
     };
     const comparativaProductos = await productoModel.findOne({
       codigoReferencia: data.codigoReferencia,
@@ -71,7 +70,6 @@ productoController.editarProductoByReference = async (req, res, next) => {
       aplicaIva: req.body.iva,
       precioUnitario: req.body.precioUnitario,
       aplicaIva: req.body.aplicaIva,
-      cantidad: req.body.cantidad,
     };
     for (const iterator of Object.values(req.body)) {
       contador++;

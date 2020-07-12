@@ -1,6 +1,7 @@
 const inventarioModel = require('../models/inventarioModel');
 const productoModel = require('../models/productoModel');
 const distribucionModel = require('../models/distribucionModel');
+const usuarioModel = require('../models/usuarioModel');
 const inventarioController = {};
 
 inventarioController.getInventarioByUser = async (req, res, next) => {
@@ -30,6 +31,31 @@ inventarioController.crearInventario = async (req, res, next) => {
       codigoUsuario: req.body.codigoUsuario,
       productos: req.body.productos,
     };
+    const usuarioCreador = await usuarioModel.findOne({
+      codigo: data.codigoUsuario,
+    });
+    if (!usuarioCreador) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'El usuario no existe',
+      });
+    }
+    if (usuarioCreador.rol !== 'microaliado') {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje:
+          'El usuario no tiene el rol requerido para asignarle un inventario',
+      });
+    }
+    const productoExistente = await productoModel.findOne({
+      codigoReferencia: data.productos.id,
+    });
+    if (!productoExistente) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'No se encuentra un producto con este codigo de referencia',
+      });
+    }
     const inventarioExistente = await inventarioModel.findOne({
       codigoUsuario: data.codigoUsuario,
     });
@@ -44,7 +70,7 @@ inventarioController.crearInventario = async (req, res, next) => {
           });
         }
       }
-      const resultado = await inventarioModel.findOneAndUpdate(
+      await inventarioModel.findOneAndUpdate(
         { codigoUsuario: data.codigoUsuario },
         {
           $push: {
@@ -54,17 +80,15 @@ inventarioController.crearInventario = async (req, res, next) => {
       );
 
       return res.status(200).json({
-        resultado,
         status: 'Success',
         message: 'Inventario actualizado',
       });
     } else {
       const inventario = new inventarioModel(data);
-      const resultado = await inventario.save();
+      await inventario.save();
       res.status(200).json({
         status: 'Success',
         message: 'Inventario almacenado con exito',
-        resultado,
       });
     }
   } catch (error) {
@@ -74,7 +98,19 @@ inventarioController.crearInventario = async (req, res, next) => {
 inventarioController.eliminarProductoInventario = async (req, res, next) => {
   try {
     const codigoProducto = req.body.codigoProducto;
+    let productoExiste = false;
     const inventario = await inventarioModel.findById(req.params.id);
+    for (const iterator of inventario.productos) {
+      if (iterator.id === codigoProducto) {
+        productoExiste = true;
+      }
+    }
+    if (productoExiste === false) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'El producto no se encuentra en tu inventario',
+      });
+    }
     const productosToEliminar = await inventarioModel.findOneAndUpdate(
       { _id: inventario._id },
       { $pull: { productos: { id: codigoProducto } } }

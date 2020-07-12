@@ -5,8 +5,7 @@ const usuarioSchema = new Schema(
   {
     codigo: {
       type: Number,
-      minlength: 9,
-      maxlength: 9,
+      min: 9,
       required: true,
     },
     password: {

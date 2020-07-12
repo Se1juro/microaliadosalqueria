@@ -19,10 +19,6 @@ const productSchema = new Schema(
       type: Number,
       required: true,
     },
-    cantidad: {
-      type: Number,
-      required: true,
-    },
     estado: {
       type: Boolean,
       required: true,

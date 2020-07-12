@@ -48,6 +48,7 @@ usuarioController.iniciarSesion = async (req, res, next) => {
         const datosToLocalStorage = {
           id: usuario._id,
           codigoReferencia: usuario.codigo,
+          rol: usuario.rol,
         };
         const token = jwt.sign(datosToLocalStorage, secretKey);
         return res.status(200).json({ datosToLocalStorage, token });

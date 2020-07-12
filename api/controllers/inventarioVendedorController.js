@@ -43,14 +43,13 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
           return res.status(409).json({
             status: 'Error',
             mensaje:
-              'Al parecer el producto no esta en el inventario o no tiene sotck',
+              'Al parecer el producto no esta en el inventario o no tiene cantidades disponibles',
           });
         }
         for (const product of distribucionActiva.productos) {
           idDistribucion = product.id;
         }
         if (idDistribucion === data.productos.id) {
-          console.log('Hola');
           await distribucionModel.findOneAndUpdate(
             {
               codigoInventario: data.codigoInventario,
@@ -120,6 +119,7 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
     const distribucionActual = await distribucionModel.findOne({
       codigoUsuario: data.codigoUsuario,
     });
+
     for (const key of data.productos) {
       for (const iterator of distribucionActual.productos) {
         if (key.id === iterator.id) {
@@ -143,6 +143,9 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
             },
             { $inc: { 'productos.$.cantidad': key.cantidad } }
           );
+          await distribucionModel.findOneAndRemove({
+            codigoUsuario: data.codigoUsuario,
+          });
           return res.status(200).json({
             status: 'Success',
             mensaje: 'Distribucion finalizada',
@@ -150,6 +153,11 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
         }
       }
     }
+    return res.status(409).json({
+      status: 'Error',
+      mensaje:
+        'Hubo un problema con los productos en distribucion, comunicate con el administrador',
+    });
   } catch (error) {
     next(error);
   }
