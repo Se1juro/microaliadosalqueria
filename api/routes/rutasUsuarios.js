@@ -9,6 +9,7 @@ router.post('/', usuarioController.registrarUsusario);
 router.get(
   '/:id',
   auth.verificarToken,
+  userAuth.canViewUser,
   usuarioController.consultarUsuariosByCodigo
 );
 router.get(
