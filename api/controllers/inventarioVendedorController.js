@@ -1,6 +1,7 @@
 const distribucionModel = require('../models/distribucionModel');
 const inventarioModel = require('../models/inventarioModel');
 const usuarioModel = require('../models/usuarioModel');
+const { model } = require('../models/distribucionModel');
 const inventarioVendedorController = {};
 inventarioVendedorController.moveToDistribution = async (req, res, next) => {
   try {
@@ -19,6 +20,17 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
         status: 'Error',
         mensaje: 'El inventario no existe',
       });
+    }
+    for (const iterator of inventarioOfMicroaliado.productos) {
+      if (iterator.id === data.productos.id) {
+        if (iterator.cantidad < data.productos.cantidad) {
+          return res.status(409).json({
+            status: 'Error',
+            mensaje:
+              'No puedes mandar esta cantidad a produccion, es mayor a la que hay en tu inventario',
+          });
+        }
+      }
     }
     const usuario = await usuarioModel.findOne({ codigo: data.codigoUsuario });
     if (!usuario) {
@@ -91,29 +103,34 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
           idDistribucion = product.id;
         }
         if (idDistribucion === data.productos.id) {
-          await distribucionModel.findOneAndUpdate(
-            {
-              codigoInventario: data.codigoInventario,
-              'productos.id': data.productos.id,
-            },
-            {
-              $set: {
-                'productos.$.cantidadInventario':
-                  cantidadInventario - data.productos.cantidad,
-              },
-              $inc: { 'productos.$.cantidad': data.productos.cantidad },
-            },
-            {
-              new: true,
-            }
-          );
-          await inventarioModel.findOneAndUpdate(
+          const inventario = await inventarioModel.findOneAndUpdate(
             {
               _id: data.codigoInventario,
               'productos.id': data.productos.id,
             },
             { $inc: { 'productos.$.cantidad': -data.productos.cantidad } }
           );
+          let cantidadMostrar;
+          for (const iterator of inventario.productos) {
+            if (data.productos.id === iterator.id) {
+              cantidadMostrar = iterator.cantidad;
+            }
+          }
+          await distribucionModel.findOneAndUpdate(
+            {
+              codigoInventario: data.codigoInventario,
+              'productos.id': data.productos.id,
+            },
+            {
+              $inc: {
+                'productos.$.cantidad': data.productos.cantidad,
+              },
+            },
+            {
+              new: true,
+            }
+          );
+
           return res.status(200).json({
             status: 'Success',
             mensaje: 'Distribucion actualizada',
@@ -187,20 +204,14 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
     for (const key of data.productos) {
       try {
         for (const iterator of distribucionActual.productos) {
-          if (key.id === iterator.id) {
-            for (const i of inventario.productos) {
-              if (i.id === key.id) {
-                let cantidadExcepcion = i.cantidad + key.cantidad;
-                if (cantidadExcepcion > iterator.cantidadInventario) {
-                  return res.status(409).json({
-                    status: 'Error',
-                    mensaje: 'Ya devolviste estos productos',
-                  });
-                }
-              }
-            }
-          }
           if (iterator.id === key.id) {
+            if (key.cantidad > iterator.cantidad) {
+              return res.status(409).json({
+                status: 'Error',
+                mensaje:
+                  'No puedes devolver mas de los productos que tienes en distribucion',
+              });
+            }
             await inventarioModel.findOneAndUpdate(
               {
                 _id: data.codigoInventario,
@@ -236,13 +247,20 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
                 }
               }
             }
-
-            return res.status(200).json({
-              status: 'Success',
-              mensaje: 'Distribucion finalizada',
+            const distribucionActiva = await distribucionModel.findOne({
+              codigoUsuario: data.codigoUsuario,
             });
+            if (distribucionActiva.productos.length == 0) {
+              await distribucionModel.findOneAndRemove({
+                codigoUsuario: data.codigoUsuario,
+              });
+            }
           }
         }
+        return res.status(200).json({
+          status: 'Success',
+          mensaje: 'Distribucion finalizada',
+        });
       } catch (err) {
         console.log(err);
         return res.status(409).json({
