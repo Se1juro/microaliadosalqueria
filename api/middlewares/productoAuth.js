@@ -20,4 +20,30 @@ productoAuth.canViewAllProducts = async (req, res, next) => {
     });
   }
 };
+productoAuth.canPostProduct = async (req, res, next) => {
+  try {
+    const data = {
+      codigoReferencia: req.body.codigoReferencia,
+      descripcion: req.body.descripcion,
+      aplicaIva: req.body.aplicaIva,
+      precioUnitario: req.body.precioUnitario,
+    };
+    const valorData = Object.values(data);
+    valorData.forEach((e) => {
+      if (e === '' || e === undefined) {
+        return res.status(409).json({
+          status: 'Error',
+          mensaje: 'Peticion no autorizada',
+        });
+      } else {
+        next();
+      }
+    });
+  } catch (error) {
+    return res.status(409).json({
+      status: 'Error',
+      mensaje: 'Peticion no autorizada',
+    });
+  }
+};
 module.exports = productoAuth;

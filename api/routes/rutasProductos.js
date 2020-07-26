@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth.verificarToken,
-  productoAuth.canViewAllProducts,
+  /*   auth.verificarToken,
+  productoAuth.canViewAllProducts, */
   productoController.getAllProducts
 );
 router.get(
   '/disponibles',
-  auth.verificarToken,
+  /* auth.verificarToken, */
   productoController.getProductsActive
 );
 router.get(
@@ -22,8 +22,9 @@ router.get(
 );
 router.post(
   '/',
-  auth.verificarToken,
-  productoAuth.canViewAllProducts,
+  /* auth.verificarToken,
+  productoAuth.canViewAllProducts, */
+  /* productoAuth.canPostProduct, */
   productoController.crearProducto
 );
 router.put(
@@ -34,8 +35,8 @@ router.put(
 );
 router.delete(
   '/:id',
-  auth.verificarToken,
-  productoAuth.canViewAllProducts,
+  /* auth.verificarToken,
+  productoAuth.canViewAllProducts, */
   productoController.eliminarProductoByReference
 );
 module.exports = router;

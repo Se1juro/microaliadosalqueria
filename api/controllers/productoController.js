@@ -36,27 +36,46 @@ productoController.getProductByReference = async (req, res, next) => {
 };
 productoController.crearProducto = async (req, res, next) => {
   try {
+    let error = false;
     const data = {
       codigoReferencia: req.body.codigoReferencia,
       descripcion: req.body.descripcion,
       aplicaIva: req.body.aplicaIva,
       precioUnitario: req.body.precioUnitario,
     };
-    const comparativaProductos = await productoModel.findOne({
-      codigoReferencia: data.codigoReferencia,
+    if (data.aplicaIva === 'Si' || data.aplicaIva === 'si') {
+      data.aplicaIva = true;
+    } else {
+      data.aplicaIva = false;
+    }
+    const valorData = Object.values(data);
+    valorData.forEach((e) => {
+      if (e === '' || e === undefined) {
+        error = true;
+      }
     });
-    if (comparativaProductos) {
+    if (error === false) {
+      const comparativaProductos = await productoModel.findOne({
+        codigoReferencia: data.codigoReferencia,
+      });
+      if (comparativaProductos) {
+        return res.status(409).json({
+          status: 'Error',
+          mensaje: 'Ya existe un producto con esta referencia',
+        });
+      }
+      const producto = new productoModel(data);
+      await producto.save();
+      res.status(200).json({
+        status: 'Success',
+        message: 'Producto insertado correctamente',
+      });
+    } else if (error === true) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'Ya existe un producto con esta referencia',
+        mensaje: 'Error con el producto',
       });
     }
-    const producto = new productoModel(data);
-    await producto.save();
-    res.status(200).json({
-      status: 'Success',
-      message: 'Producto insertado correctamente',
-    });
   } catch (err) {
     next(err);
   }
