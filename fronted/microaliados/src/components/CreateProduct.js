@@ -7,7 +7,27 @@ export default class CreateProduct extends Component {
     descripcion: '',
     aplicaIva: '',
     precioUnitario: 0,
+    editing: false,
   };
+  optionsIva = {
+    Afirmativo: 'Si',
+    Negativo: 'No',
+  };
+  async componentDidMount() {
+    if (this.props.match.params.id) {
+      const res = await axios.get(
+        'http://localhost:4000/productos/' + this.props.match.params.id
+      );
+      this.setState({
+        editing: true,
+        codigoReferencia: this.props.match.params.id,
+        descripcion: res.data[0].descripcion,
+        precioUnitario: res.data[0].precioUnitario,
+        aplicaIva: res.data[0].aplicaIva,
+        estado: res.data[0].estado,
+      });
+    }
+  }
   onInputChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -15,7 +35,7 @@ export default class CreateProduct extends Component {
   };
   onSubmit = async (e) => {
     e.preventDefault();
-    if (this.state.aplicaIva === 'si') {
+    if (this.state.aplicaIva === 'Si') {
       this.state.aplicaIva = true;
     } else {
       this.state.aplicaIva = false;
@@ -26,19 +46,58 @@ export default class CreateProduct extends Component {
       aplicaIva: this.state.aplicaIva,
       precioUnitario: this.state.precioUnitario,
     };
-    await axios
-      .post('http://localhost:4000/productos', newProduct)
-      .then((res) => {
-        if (res.status === 200) {
-          Swal.fire(
-            'Registro exitoso',
-            'Producto guardado con exito',
-            'success'
-          ).then(() => {
-            window.location.href = '/';
-          });
-        }
-      });
+    if (this.state.editing) {
+      await axios
+        .put(
+          'http://localhost:4000/productos/' + this.state.codigoReferencia,
+          newProduct
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            Swal.fire(
+              'Registro exitoso',
+              'Producto guardado con exito',
+              'success'
+            )
+              .then(() => {
+                window.location.href = '/';
+              })
+              .catch((err) => {
+                if (err) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Algo salio mal, comunicate con el administrador',
+                  });
+                }
+              });
+          }
+        });
+    } else {
+      await axios
+        .post('http://localhost:4000/productos', newProduct)
+        .then((res) => {
+          if (res.status === 200) {
+            Swal.fire(
+              'Registro exitoso',
+              'Producto guardado con exito',
+              'success'
+            )
+              .then(() => {
+                window.location.href = '/';
+              })
+              .catch((err) => {
+                if (err) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Algo salio mal, comunicate con el administrador',
+                  });
+                }
+              });
+          }
+        });
+    }
   };
   render() {
     return (
@@ -55,6 +114,7 @@ export default class CreateProduct extends Component {
                 name="codigoReferencia"
                 onChange={this.onInputChange}
                 placeholder="Ingresa el codigo de referencia"
+                value={this.state.codigoReferencia}
                 required
               />
             </div>
@@ -66,6 +126,7 @@ export default class CreateProduct extends Component {
                 id="descripcion"
                 name="descripcion"
                 onChange={this.onInputChange}
+                value={this.state.descripcion}
                 placeholder="Ingresa el nombre del producto"
                 required
               />
@@ -77,11 +138,15 @@ export default class CreateProduct extends Component {
                 id="aplicaIva"
                 name="aplicaIva"
                 onChange={this.onInputChange}
-                defaultValue="Seleccionar"
+                value={
+                  this.state.aplicaIva
+                    ? this.optionsIva.Afirmativo
+                    : this.optionsIva.Afirmativo
+                }
               >
                 <option>Seleccionar</option>
-                <option>Si</option>
-                <option>No</option>
+                <option>{this.optionsIva.Afirmativo}</option>
+                <option>{this.optionsIva.Negativo}</option>
               </select>
             </div>
             <div className="form-group">
@@ -92,6 +157,7 @@ export default class CreateProduct extends Component {
                 id="precioUnitario"
                 name="precioUnitario"
                 onChange={this.onInputChange}
+                value={this.state.precioUnitario}
                 placeholder="Ingresa el precio del producto"
                 required
               />

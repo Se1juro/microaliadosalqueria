@@ -82,6 +82,7 @@ productoController.crearProducto = async (req, res, next) => {
 };
 productoController.editarProductoByReference = async (req, res, next) => {
   try {
+    console.log(req.body);
     const codigoReferencia = req.params.id;
     let contador = 0;
     const data = {
@@ -94,7 +95,7 @@ productoController.editarProductoByReference = async (req, res, next) => {
       contador++;
     }
     //El numero de campos que debe tener el cuerpo del body para editar un producto debe ser de 5, si es menor a este numero, faltan datos.
-    if (contador < 5) {
+    if (contador < 4) {
       return res.status(409).json({
         status: 'Error',
         message: 'Faltan campos para poder edita el producto',

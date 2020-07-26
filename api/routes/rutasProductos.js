@@ -17,7 +17,7 @@ router.get(
 );
 router.get(
   '/:id',
-  auth.verificarToken,
+  /* auth.verificarToken, */
   productoController.getProductByReference
 );
 router.post(
@@ -29,8 +29,8 @@ router.post(
 );
 router.put(
   '/:id',
-  auth.verificarToken,
-  productoAuth.canViewAllProducts,
+  /* auth.verificarToken,
+  productoAuth.canViewAllProducts, */
   productoController.editarProductoByReference
 );
 router.delete(

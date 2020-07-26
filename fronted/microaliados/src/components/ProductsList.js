@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import 'font-awesome/css/font-awesome.min.css';
-import CreateProduct from './CreateProduct';
+import Admin from '../img/member.svg';
 import { Link } from 'react-router-dom';
 export default class ProductsList extends Component {
   state = {
@@ -62,7 +62,25 @@ export default class ProductsList extends Component {
           </table>
         </div>
         <div className="col-md-4">
-          <CreateProduct></CreateProduct>
+          <p>
+            Si tienes problemas recuerda comunicarte con el{' '}
+            <strong>administrador</strong>
+          </p>
+          <center>
+            <img
+              src={Admin}
+              alt="Desarrollador web"
+              className="img-fluid"
+              width="100px"
+              height="100px"
+            />
+          </center>
+          <button
+            className="btn btn-primary btn-block"
+            style={{ marginTop: '40px' }}
+          >
+            Solicitar Soporte
+          </button>
         </div>
       </div>
     );
