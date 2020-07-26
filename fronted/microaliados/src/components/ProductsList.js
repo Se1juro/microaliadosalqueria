@@ -3,9 +3,11 @@ import axios from 'axios';
 import 'font-awesome/css/font-awesome.min.css';
 import Admin from '../img/member.svg';
 import { Link } from 'react-router-dom';
+import { Spinner } from 'react-bootstrap';
 export default class ProductsList extends Component {
   state = {
     productos: [],
+    loading: true,
   };
   componentDidMount() {
     this.getNotes();
@@ -16,50 +18,61 @@ export default class ProductsList extends Component {
   };
   async getNotes() {
     const res = await axios.get('http://localhost:4000/productos/disponibles');
-    this.setState({ productos: res.data });
+    this.setState({ productos: res.data, loading: false });
   }
   render() {
+    const loading = this.state.loading;
     return (
       <div className="row">
         <div className="col-md-8">
-          <table className="table table-responsive  mx-auto">
-            <thead className="thead-dark">
-              <tr>
-                <th scope="col">Codigo Referencia</th>
-                <th scope="col">Descripcion</th>
-                <th scope="col">IVA</th>
-                <th scope="col">Precio Unitario</th>
-                <th scope="col">Opciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.productos.map((producto) => (
-                <tr key={producto._id}>
-                  <td>{producto.codigoReferencia}</td>
-                  <td>{producto.descripcion}</td>
-                  <td>{producto.aplicaIva ? 'Si' : 'No'}</td>
-                  <td>{producto.precioUnitario}</td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() =>
-                        this.deleteProduct(producto.codigoReferencia)
-                      }
-                      style={{ margin: '5px' }}
-                    >
-                      Delete
-                    </button>
-                    <Link
-                      className="btn btn-primary"
-                      to={'/editarproducto/' + producto.codigoReferencia}
-                    >
-                      Actualizar
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <center>
+            {loading ? (
+              <Spinner
+                animation="border"
+                variant="primary"
+                style={{ marginTop: '10px' }}
+              />
+            ) : (
+              <table className="table table-responsive  mx-auto">
+                <thead className="thead-dark">
+                  <tr>
+                    <th scope="col">Codigo Referencia</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">IVA</th>
+                    <th scope="col">Precio Unitario</th>
+                    <th scope="col">Opciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.productos.map((producto) => (
+                    <tr key={producto._id}>
+                      <td>{producto.codigoReferencia}</td>
+                      <td>{producto.descripcion}</td>
+                      <td>{producto.aplicaIva ? 'Si' : 'No'}</td>
+                      <td>{producto.precioUnitario}</td>
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() =>
+                            this.deleteProduct(producto.codigoReferencia)
+                          }
+                          style={{ margin: '5px' }}
+                        >
+                          Delete
+                        </button>
+                        <Link
+                          className="btn btn-primary"
+                          to={'/editarproducto/' + producto.codigoReferencia}
+                        >
+                          Actualizar
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </center>
         </div>
         <div className="col-md-4">
           <p>
