@@ -6,7 +6,7 @@ import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './App.css';
 
-import Navigation from './components/Navigation';
+import Navigation from './components/layout/Navigation';
 import Routes from './components/Routes';
 
 function App() {

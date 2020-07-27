@@ -6,37 +6,36 @@ const router = express.Router();
 
 router.get(
   '/',
-  /*   auth.verificarToken,
-  productoAuth.canViewAllProducts, */
+  auth.verificarToken,
+  productoAuth.canViewAllProducts,
   productoController.getAllProducts
 );
 router.get(
   '/disponibles',
-  /* auth.verificarToken, */
+  auth.verificarToken,
   productoController.getProductsActive
 );
 router.get(
   '/:id',
-  /* auth.verificarToken, */
+  auth.verificarToken,
   productoController.getProductByReference
 );
 router.post(
   '/',
-  /* auth.verificarToken,
-  productoAuth.canViewAllProducts, */
-  /* productoAuth.canPostProduct, */
+  auth.verificarToken,
+  productoAuth.canViewAllProducts,
   productoController.crearProducto
 );
 router.put(
   '/:id',
-  /* auth.verificarToken,
-  productoAuth.canViewAllProducts, */
+  auth.verificarToken,
+  productoAuth.canViewAllProducts,
   productoController.editarProductoByReference
 );
 router.delete(
   '/:id',
-  /* auth.verificarToken,
-  productoAuth.canViewAllProducts, */
+  auth.verificarToken,
+  productoAuth.canViewAllProducts,
   productoController.eliminarProductoByReference
 );
 module.exports = router;

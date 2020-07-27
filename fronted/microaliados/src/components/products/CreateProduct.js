@@ -8,6 +8,7 @@ export default class CreateProduct extends Component {
     aplicaIva: '',
     precioUnitario: 0,
     editing: false,
+    token: localStorage.getItem('token'),
   };
   optionsIva = {
     Afirmativo: 'Si',
@@ -16,7 +17,12 @@ export default class CreateProduct extends Component {
   async componentDidMount() {
     if (this.props.match.params.id) {
       const res = await axios.get(
-        'http://localhost:4000/productos/' + this.props.match.params.id
+        'http://localhost:4000/productos/' + this.props.match.params.id,
+        {
+          headers: {
+            Authorization: 'Bearer ' + this.state.token,
+          },
+        }
       );
       this.setState({
         editing: true,
@@ -50,53 +56,58 @@ export default class CreateProduct extends Component {
       await axios
         .put(
           'http://localhost:4000/productos/' + this.state.codigoReferencia,
-          newProduct
+          newProduct,
+          {
+            headers: {
+              Authorization: 'Bearer ' + this.state.token,
+            },
+          }
         )
         .then((res) => {
-          if (res.status === 200) {
-            Swal.fire(
-              'Registro exitoso',
-              'Producto guardado con exito',
-              'success'
-            )
-              .then(() => {
+          try {
+            if (res.status === 200) {
+              Swal.fire(
+                'Registro exitoso',
+                'Producto guardado con exito',
+                'success'
+              ).then(() => {
                 window.location.href = '/';
-              })
-              .catch((err) => {
-                if (err) {
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Algo salio mal, comunicate con el administrador',
-                  });
-                }
               });
+            }
+          } catch (error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Algo salio mal, comunicate con el administrador',
+            });
           }
         });
     } else {
-      await axios
-        .post('http://localhost:4000/productos', newProduct)
-        .then((res) => {
-          if (res.status === 200) {
-            Swal.fire(
-              'Registro exitoso',
-              'Producto guardado con exito',
-              'success'
-            )
-              .then(() => {
+      try {
+        await axios
+          .post('http://localhost:4000/productos', newProduct, {
+            headers: {
+              Authorization: 'Bearer ' + this.state.token,
+            },
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              Swal.fire(
+                'Registro exitoso',
+                'Producto guardado con exito',
+                'success'
+              ).then(() => {
                 window.location.href = '/';
-              })
-              .catch((err) => {
-                if (err) {
-                  Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Algo salio mal, comunicate con el administrador',
-                  });
-                }
               });
-          }
+            }
+          });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Algo salio mal, comunicate con el administrador',
         });
+      }
     }
   };
   render() {
@@ -141,7 +152,7 @@ export default class CreateProduct extends Component {
                 value={
                   this.state.aplicaIva
                     ? this.optionsIva.Afirmativo
-                    : this.optionsIva.Afirmativo
+                    : this.optionsIva.Negativo
                 }
               >
                 <option>Seleccionar</option>

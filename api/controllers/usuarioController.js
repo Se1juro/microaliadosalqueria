@@ -32,8 +32,8 @@ usuarioController.registrarUsusario = async (req, res, next) => {
 };
 usuarioController.iniciarSesion = async (req, res, next) => {
   try {
-    const { codigo } = req.body;
-    const usuario = await usuarioModel.findOne({ codigo });
+    const { codigoReferencia } = req.body;
+    const usuario = await usuarioModel.findOne({ codigo: codigoReferencia });
     if (!usuario) {
       return res.status(409).json({
         status: 'Error',
@@ -47,6 +47,7 @@ usuarioController.iniciarSesion = async (req, res, next) => {
       if (matchPassword) {
         const datosToLocalStorage = {
           id: usuario._id,
+          nombre: usuario.nombre,
           codigoReferencia: usuario.codigo,
           rol: usuario.rol,
         };

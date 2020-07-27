@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import LogoProductos from '../img/product.svg';
+import LogoProductos from '../../img/product.svg';
 import Axios from 'axios';
 import { Spinner } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 export default class LoginUser extends Component {
   state = {
     codigoReferencia: '',
     password: '',
+    logged: false,
     loading: false,
   };
   onInputChange = (e) => {
@@ -16,19 +18,23 @@ export default class LoginUser extends Component {
   };
   onSubmit = async (e) => {
     e.preventDefault();
-
     const usuario = {
       codigoReferencia: this.state.codigoReferencia,
       password: this.state.password,
     };
     try {
-      await Axios.post('http://localhost:4000/login', usuario).then((res) => {
-        localStorage.setItem('token', res.data.token);
-        this.setState({ loading: true });
-        window.location.href = '/';
-      });
+      const res = await Axios.post('http://localhost:4000/login', usuario);
+      localStorage.setItem('token', res.data.token);
+      this.setState({ loading: true, logged: true });
     } catch (error) {
-      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Algo salio mal, comunicate con el administrador',
+      });
+    }
+    if (this.state.logged) {
+      window.location.href = '/productos';
     }
   };
   render() {

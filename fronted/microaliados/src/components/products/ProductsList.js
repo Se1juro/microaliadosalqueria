@@ -1,23 +1,60 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import 'font-awesome/css/font-awesome.min.css';
-import Admin from '../img/member.svg';
+import Admin from '../../img/member.svg';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 export default class ProductsList extends Component {
   state = {
     productos: [],
     loading: true,
+    token: localStorage.getItem('token'),
   };
   componentDidMount() {
-    this.getNotes();
+    this.getProducts();
   }
   deleteProduct = async (id) => {
-    await axios.delete('http://localhost:4000/productos/' + id);
-    this.getNotes();
+    Swal.fire({
+      title: '¿Estas seguro de eliminar este producto?',
+      text: 'Esta accion puede no ser irreversible',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminalo',
+    }).then(async (result) => {
+      if (result.value) {
+        Swal.fire('Eliminado', 'Tu producto ha sido eliminado', 'success');
+        try {
+          await axios.delete('http://localhost:4000/productos/' + id, {
+            headers: {
+              Authorization: 'Bearer ' + this.state.token,
+            },
+          });
+          this.getProducts();
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Algo salio mal',
+            text: 'No pudimos eliminar tu producto',
+          });
+        }
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Algo salio mal',
+          text: 'No pudimos eliminar tu producto',
+        });
+      }
+    });
   };
-  async getNotes() {
-    const res = await axios.get('http://localhost:4000/productos/disponibles');
+  async getProducts() {
+    const res = await axios.get('http://localhost:4000/productos/disponibles', {
+      headers: {
+        Authorization: 'Bearer ' + this.state.token,
+      },
+    });
     this.setState({ productos: res.data, loading: false });
   }
   render() {
@@ -58,7 +95,7 @@ export default class ProductsList extends Component {
                           }
                           style={{ margin: '5px' }}
                         >
-                          Delete
+                          Eliminar
                         </button>
                         <Link
                           className="btn btn-primary"
