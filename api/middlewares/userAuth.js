@@ -29,4 +29,23 @@ userAuth.canViewUser = async (req, res, next) => {
     });
   }
 };
+userAuth.datosRegister = async (req, res, next) => {
+  try {
+    const data = Object.values(req.body);
+    for (const iterator of data) {
+      if (iterator === '' || iterator === undefined) {
+        return res.status(409).json({
+          status: 'Error',
+          mensaje: 'Por favor rellena tus datos',
+        });
+      }
+    }
+    next();
+  } catch (error) {
+    return res.status(409).json({
+      status: 'Error',
+      mensaje: 'Hubo un problema con tu registro, intentalo de nuevo',
+    });
+  }
+};
 module.exports = userAuth;

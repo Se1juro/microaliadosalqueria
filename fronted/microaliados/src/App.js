@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'jquery';
 import 'popper.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import './App.css';
+import './Styles/App.css';
 
 import Navigation from './components/layout/Navigation';
 import Routes from './components/Routes';

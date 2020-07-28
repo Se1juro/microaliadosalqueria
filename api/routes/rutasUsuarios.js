@@ -5,7 +5,7 @@ const adminAuth = require('../middlewares/productoAuth');
 const userAuth = require('../middlewares/userAuth');
 const router = express.Router();
 
-router.post('/', usuarioController.registrarUsusario);
+router.post('/', userAuth.datosRegister, usuarioController.registrarUsusario);
 router.get(
   '/:id',
   auth.verificarToken,

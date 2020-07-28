@@ -38,6 +38,7 @@ export default class CreateProduct extends Component {
     this.setState({
       [e.target.name]: e.target.value,
     });
+    console.log(e.target.name, e.target.value);
   };
   onSubmit = async (e) => {
     e.preventDefault();
@@ -53,6 +54,7 @@ export default class CreateProduct extends Component {
       precioUnitario: this.state.precioUnitario,
     };
     if (this.state.editing) {
+      console.log(this.state);
       await axios
         .put(
           'http://localhost:4000/productos/' + this.state.codigoReferencia,
@@ -71,7 +73,7 @@ export default class CreateProduct extends Component {
                 'Producto guardado con exito',
                 'success'
               ).then(() => {
-                window.location.href = '/';
+                window.location.href = '/productos';
               });
             }
           } catch (error) {
@@ -83,6 +85,7 @@ export default class CreateProduct extends Component {
           }
         });
     } else {
+      console.log(this.state);
       try {
         await axios
           .post('http://localhost:4000/productos', newProduct, {
@@ -97,7 +100,7 @@ export default class CreateProduct extends Component {
                 'Producto guardado con exito',
                 'success'
               ).then(() => {
-                window.location.href = '/';
+                window.location.href = '/productos';
               });
             }
           });
@@ -149,11 +152,7 @@ export default class CreateProduct extends Component {
                 id="aplicaIva"
                 name="aplicaIva"
                 onChange={this.onInputChange}
-                value={
-                  this.state.aplicaIva
-                    ? this.optionsIva.Afirmativo
-                    : this.optionsIva.Negativo
-                }
+                value={this.state.aplicaIva}
               >
                 <option>Seleccionar</option>
                 <option>{this.optionsIva.Afirmativo}</option>

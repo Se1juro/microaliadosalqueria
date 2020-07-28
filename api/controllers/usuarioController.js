@@ -15,6 +15,13 @@ usuarioController.registrarUsusario = async (req, res, next) => {
       municipio: req.body.municipio,
       telefono: req.body.telefono,
     };
+    const usuarioExistente = usuarioModel.findOne({ codigo: data.codigo });
+    if (usuarioExistente) {
+      return res.status(409).json({
+        status: 'Error',
+        mensaje: 'Ya existe un usuario con este codigo.',
+      });
+    }
     const nuevoUsuario = new usuarioModel(data);
     const passwordHash = await bcrypt.hash(
       nuevoUsuario.password,
@@ -22,9 +29,17 @@ usuarioController.registrarUsusario = async (req, res, next) => {
     );
     nuevoUsuario.password = passwordHash;
     await nuevoUsuario.save();
+    const datosToLocalStorage = {
+      id: nuevoUsuario._id,
+      nombre: nuevoUsuario.nombre,
+      codigoReferencia: nuevoUsuario.codigo,
+      rol: nuevoUsuario.rol,
+    };
+    const token = jwt.sign(datosToLocalStorage, secretKey);
     return res.status(200).json({
       status: 'Success',
       mensaje: 'Registro exitoso',
+      token,
     });
   } catch (error) {
     next(error);

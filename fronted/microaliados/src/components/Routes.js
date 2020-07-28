@@ -34,7 +34,10 @@ export default function Routes() {
         exact
         component={(props) => <AuthLogin {...props} Component={ProductList} />}
       />
-      <Route path="/register" component={RegisterUser}></Route>
+      <Route
+        path="/register"
+        component={(props) => <BackLogin {...props} Component={RegisterUser} />}
+      ></Route>
       <Route
         path="/login"
         exact

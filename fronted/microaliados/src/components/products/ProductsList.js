@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import 'font-awesome/css/font-awesome.min.css';
-import Admin from '../../img/member.svg';
 import { Link } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+import SolicitarSoporte from '../views/SolicitarSoporte';
 export default class ProductsList extends Component {
   state = {
     productos: [],
@@ -111,27 +111,7 @@ export default class ProductsList extends Component {
             )}
           </center>
         </div>
-        <div className="col-md-4">
-          <p>
-            Si tienes problemas recuerda comunicarte con el{' '}
-            <strong>administrador</strong>
-          </p>
-          <center>
-            <img
-              src={Admin}
-              alt="Desarrollador web"
-              className="img-fluid"
-              width="100px"
-              height="100px"
-            />
-          </center>
-          <button
-            className="btn btn-primary btn-block"
-            style={{ marginTop: '40px' }}
-          >
-            Solicitar Soporte
-          </button>
-        </div>
+        <SolicitarSoporte></SolicitarSoporte>
       </div>
     );
   }

@@ -43,11 +43,6 @@ productoController.crearProducto = async (req, res, next) => {
       aplicaIva: req.body.aplicaIva,
       precioUnitario: req.body.precioUnitario,
     };
-    if (data.aplicaIva === 'Si' || data.aplicaIva === 'si') {
-      data.aplicaIva = true;
-    } else {
-      data.aplicaIva = false;
-    }
     const valorData = Object.values(data);
     valorData.forEach((e) => {
       if (e === '' || e === undefined) {
@@ -82,7 +77,6 @@ productoController.crearProducto = async (req, res, next) => {
 };
 productoController.editarProductoByReference = async (req, res, next) => {
   try {
-    console.log(req.body);
     const codigoReferencia = req.params.id;
     let contador = 0;
     const data = {
