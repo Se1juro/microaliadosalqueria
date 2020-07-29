@@ -38,5 +38,5 @@ router.post(
     usuarioController.asignarMicroaliadoToVendedor
 );
 router.put('/makeAdmin/:id', auth.verificarToken, adminAuth.canViewAllProducts, usuarioController.makeAdmin);
-router.put("/delete/:id", auth.verificarToken, adminAuth.canViewAllProducts,adminAuth.errorDeleteSelf, usuarioController.deleteUser);
+router.put("/delete/:id", auth.verificarToken, adminAuth.canViewAllProducts, adminAuth.errorDeleteSelf, usuarioController.deleteUser);
 module.exports = router;

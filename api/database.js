@@ -8,7 +8,7 @@ mongoose
     useFindAndModify: false,
     useCreateIndex: true,
   })
-  .then((db) => console.log('DataBase Connect Succesfull'))
+  .then(() => console.log('DataBase Connect Succesfull'))
   .catch((err) => console.log(err + ' Error en la conexion a la BD'));
 
 module.exports = mongoose;

@@ -1,7 +1,6 @@
 const distribucionModel = require('../models/distribucionModel');
 const inventarioModel = require('../models/inventarioModel');
 const usuarioModel = require('../models/usuarioModel');
-const { model } = require('../models/distribucionModel');
 const inventarioVendedorController = {};
 inventarioVendedorController.moveToDistribution = async (req, res, next) => {
   try {
@@ -235,7 +234,7 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
             for (const iterator of removeOrNotRemoveDistri.productos) {
               for (const i of data.productos) {
                 if (i.id === iterator.id) {
-                  if (iterator.cantidad == 0) {
+                  if (iterator.cantidad === 0) {
                     await distribucionModel.findOneAndUpdate(
                       {
                         codigoUsuario: data.codigoUsuario,
@@ -250,7 +249,7 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
             const distribucionActiva = await distribucionModel.findOne({
               codigoUsuario: data.codigoUsuario,
             });
-            if (distribucionActiva.productos.length == 0) {
+            if (distribucionActiva.productos.length === 0) {
               await distribucionModel.findOneAndRemove({
                 codigoUsuario: data.codigoUsuario,
               });

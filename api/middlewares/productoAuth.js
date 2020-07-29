@@ -24,7 +24,6 @@ productoAuth.errorDeleteSelf = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     await jwt.verify(token, secretKey, async (err, decoded) => {
-      console.log(decoded, req.params.id)
       if (decoded.id === req.params.id) {
         return res.status(401).json({
           status: 'Error',

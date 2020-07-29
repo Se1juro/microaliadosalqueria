@@ -6,7 +6,7 @@ userAuth.canViewUser = async (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     await jwt.verify(token, secretKey, async (err, decoded) => {
       const codigoUsuario = req.params.id;
-      if (decoded.rol == 'admin' || codigoUsuario == decoded.codigoReferencia) {
+      if (decoded.rol === 'admin' || codigoUsuario === decoded.codigoReferencia) {
         next();
       } else {
         return res.status(401).json({

@@ -81,7 +81,6 @@ productoController.editarProductoByReference = async (req, res, next) => {
     let contador = 0;
     const data = {
       descripcion: req.body.descripcion,
-      aplicaIva: req.body.iva,
       precioUnitario: req.body.precioUnitario,
       aplicaIva: req.body.aplicaIva,
     };
@@ -141,7 +140,7 @@ productoController.eliminarProductoByReference = async (req, res, next) => {
       { codigoReferencia: codigoReferencia },
       { estado: false },
       { new: true },
-      (err, doc) => {
+      (err) => {
         if (err) {
           return res.status(409).json({
             status: 'Error',
