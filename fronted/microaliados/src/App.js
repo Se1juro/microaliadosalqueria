@@ -7,7 +7,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './Styles/App.css';
 
 import Navigation from './components/layout/Navigation';
-import Routes from './components/Routes';
+import Routes from './components/Routes/Routes';
 
 function App() {
   return (

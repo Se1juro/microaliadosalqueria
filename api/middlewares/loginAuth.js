@@ -4,6 +4,7 @@ const loginAuth = {};
 loginAuth.verificarToken = async (req, res, next) => {
   try {
     if (!req.headers.authorization) {
+      console.log("Hola")
       return res.status(401).json({
         status: 'Error',
         mensaje: 'Peticion no autorizada',

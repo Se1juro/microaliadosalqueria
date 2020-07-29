@@ -7,27 +7,36 @@ const router = express.Router();
 
 router.post('/', userAuth.datosRegister, usuarioController.registrarUsusario);
 router.get(
-  '/:id',
-  auth.verificarToken,
-  userAuth.canViewUser,
-  usuarioController.consultarUsuariosByCodigo
+    '/disponibles',
+    auth.verificarToken,
+    adminAuth.canViewAllProducts,
+    usuarioController.usersActives
 );
 router.get(
-  '/',
-  auth.verificarToken,
-  adminAuth.canViewAllProducts,
-  usuarioController.consultarUsuarios
+    '/',
+    auth.verificarToken,
+    adminAuth.canViewAllProducts,
+    usuarioController.consultarUsuarios
+);
+router.get(
+    '/:id',
+    auth.verificarToken,
+    userAuth.canViewUser,
+    usuarioController.consultarUsuariosByCodigo
+);
+
+router.post(
+    '/convert/:id',
+    auth.verificarToken,
+    adminAuth.canViewAllProducts,
+    usuarioController.makeMicroaliado
 );
 router.post(
-  '/convert/:id',
-  auth.verificarToken,
-  adminAuth.canViewAllProducts,
-  usuarioController.makeMicroaliado
+    '/asignmicro/:id',
+    auth.verificarToken,
+    adminAuth.canViewAllProducts,
+    usuarioController.asignarMicroaliadoToVendedor
 );
-router.post(
-  '/asignmicro/:id',
-  auth.verificarToken,
-  adminAuth.canViewAllProducts,
-  usuarioController.asignarMicroaliadoToVendedor
-);
+router.put('/makeAdmin/:id', auth.verificarToken, adminAuth.canViewAllProducts, usuarioController.makeAdmin);
+router.put("/delete/:id", auth.verificarToken, adminAuth.canViewAllProducts,adminAuth.errorDeleteSelf, usuarioController.deleteUser);
 module.exports = router;
