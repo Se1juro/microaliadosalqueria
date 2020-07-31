@@ -3,7 +3,7 @@ import Admin from '../../img/member.svg';
 export default class SolicitarSoporte extends Component {
   render() {
     return (
-      <div className="col-md-4">
+      <div className="col-md-12">
         <p>
           Si tienes problemas recuerda comunicarte con el{' '}
           <strong>administrador</strong>
@@ -23,7 +23,9 @@ export default class SolicitarSoporte extends Component {
         >
           Solicitar Soporte
         </button>
+
       </div>
+
     );
   }
 }

@@ -211,15 +211,21 @@ usuarioController.deleteUser=async(req,res,next)=>{
   try {
     const id = req.params.id;
     const userExists = await usuarioModel.findByIdAndUpdate(id);
+
     if (userExists){
+      if (!userExists.estado){
+        return res.status(409).json({
+          status:'Error',
+          mensaje:'El usuario ya se encuentra inactivo'
+        })
+      }
       await usuarioModel.findByIdAndUpdate(id, {estado: false},{new:true})
       return res.status(200).json({
         status:'Success',
         mensaje:'Se ha modificado el usuario con exito'
       })
     }else{
-      console.log("entre aca")
-      res.status(409).json({
+      return res.status(409).json({
         status:'Error',
         mensaje:'El usuario que intenta modificar no existe'
       })
