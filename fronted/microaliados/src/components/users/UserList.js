@@ -3,7 +3,6 @@ import { Spinner } from 'react-bootstrap';
 import BodyTableUsers from './BodyTableUsers';
 import { userService } from './services/userServices';
 import SearchUserForm from './SearchUserForm';
-import Swal from 'sweetalert2';
 import AdvanceOptionsUsers from './AdvancedOptionsUsers';
 
 class UserList extends Component {
@@ -32,25 +31,11 @@ class UserList extends Component {
     this.setState({ searchingUser: true });
   };
 
-  getUserByCode = async (code) => {
-    if (this.state.searchingUser) {
-      if (code) {
-        const dataOfUser = await userService.searchByCode(code);
-        const newUser = [];
-        newUser.push(dataOfUser.resultado);
-        if (newUser[0] === null || newUser[0] === undefined) {
-          return await Swal.fire({
-            icon: 'error',
-            title: 'Algo salio mal',
-            text: 'No pudimos encontrar el usuario',
-            timer: 2000,
-          });
-        }
-        this.setState({ usuarios: newUser });
-      } else {
-        await this.getUsers();
-      }
+  getUserByCode = async (user) => {
+    if (user===undefined){
+      return await this.getUsers();
     }
+    this.setState({usuarios:user})
   };
 
   getUsers = async () => {
@@ -67,7 +52,7 @@ class UserList extends Component {
     return (
       <div className="row d-flex justify-content-center">
         {searchingUser ? (
-          <SearchUserForm getUserByCode={this.getUserByCode} />
+          <SearchUserForm getUserByCode={this.getUserByCode} searchingUserToList={true}/>
         ) : null}
         <div className="col-md-12 ">
           {loading ? (
@@ -102,6 +87,7 @@ class UserList extends Component {
             <AdvanceOptionsUsers
               changeValueOfUserList={this.changeValueOfUserList}
               searchUser={this.searchUser}
+              getUserByCode={this.getUserByCode}
             />
           </div>
         </div>

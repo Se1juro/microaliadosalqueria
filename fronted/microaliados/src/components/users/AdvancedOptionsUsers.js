@@ -43,11 +43,11 @@ export default class AdvancedOptionsUsers extends Component {
               <FontAwesomeIcon icon={faUser} /> Buscar usuario
             </button>
             <Link
-              to="/"
+              to="/asignmicro"
               className="btn btn-primary "
               style={{ marginLeft: '10px' }}
             >
-              Hola
+              Asignar microaliado a vendedor
             </Link>
             <br />
             {!this.state.stateOfList ? (
