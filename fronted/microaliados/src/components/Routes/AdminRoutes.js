@@ -3,6 +3,7 @@ import CreateProduct from "../products/CreateProduct";
 import {Redirect, Route} from "react-router-dom";
 import jwt from "jsonwebtoken";
 import UserList from "../users/UserList";
+import UserEdit from "../users/UserEdit";
 
 const isAdmin = () => {
   const token = jwt.decode(localStorage.getItem('token'));
@@ -21,6 +22,7 @@ class AdminRoutes extends Component {
           <MyRoute path="/crearproducto" component={CreateProduct}/>
           <MyRoute path="/editarproducto/:id" component={CreateProduct}/>
           <MyRoute path={"/usuarios/"} component={UserList}/>
+          <MyRoute path={"/editarusuario/:id"} component={UserEdit}/>
         </>
     );
   }

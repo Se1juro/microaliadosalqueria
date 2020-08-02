@@ -28,7 +28,7 @@ export default class LoginUser extends Component {
       localStorage.setItem('token', res.data.token);
       this.setState({loading: true, logged: true});
     } catch (error) {
-      Swal.fire({
+      await Swal.fire({
         icon: 'error',
         title: 'Oops...',
         text: 'Algo salio mal, comunicate con el administrador',

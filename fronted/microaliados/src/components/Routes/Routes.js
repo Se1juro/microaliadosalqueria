@@ -12,8 +12,6 @@ import AuthLogin from '../auth/AuthLogin';
 import BackLogin from '../auth/backLogin';
 import AdminRoutes from "./AdminRoutes";
 
-
-
 export default function Routes() {
   return (
       <Switch>

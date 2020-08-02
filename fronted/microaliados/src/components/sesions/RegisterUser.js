@@ -6,8 +6,8 @@ import { Spinner } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 
 export default class RegisterUser extends Component {
-  componentDidMount() {
-    this.getDepartments();
+  async componentDidMount() {
+    await this.getDepartments();
   }
   state = {
     codigo: 0,

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import NavBarAdmins from "./NavBarAdmins";
 import ButtonNavBar from "./ButtonNavBar";
 import {NavLink} from "react-router-dom";
+import Logout from "../sesions/Logout";
 
 export default class Navigation extends Component {
   state = {
@@ -20,6 +21,10 @@ export default class Navigation extends Component {
       }
       this.setState({logged: true, nombreUsuario: token.nombre});
     }
+  }
+
+  changeValueOfSession =  () => {
+    this.setState({logged: false, isAdmin: false})
   }
 
   render() {
@@ -60,9 +65,7 @@ export default class Navigation extends Component {
                 )}
                 {logged ? (
                     <li className="nav-item">
-                      <NavLink exact className="nav-link" to="/logout" activeClassName="main-nav-active">
-                        Cerrar Sesion
-                      </NavLink>
+                      <Logout onClick={this.changeValueOfSession}/>
                     </li>
                 ) : null}
               </ul>

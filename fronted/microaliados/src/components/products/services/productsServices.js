@@ -48,7 +48,7 @@ productsServices.deleteProduct = async (id,fn) => {
           }).then(fn());
 
         } else {
-          Swal.fire({
+          await Swal.fire({
             icon: 'error',
             title: 'Algo salio mal',
             text: 'No pudimos eliminar tu producto',
@@ -56,7 +56,7 @@ productsServices.deleteProduct = async (id,fn) => {
           });
         }
       } catch (error) {
-        Swal.fire({
+        await Swal.fire({
           icon: 'error',
           title: 'Algo salio mal',
           text: 'No pudimos eliminar tu producto',

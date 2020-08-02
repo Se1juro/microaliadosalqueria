@@ -66,5 +66,73 @@ userService.getUsers = async (viewAllUsers) => {
   }
   return ({usuarios: res.data, loading: false})
 }
+userService.searchByCode = async (code) => {
+  if (!code) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Algo salio mal',
+      text: 'No pudimos encontrar el usuario',
+      timer: 2000
+    });
+  } else {
+    try {
+      const res = await axios.get("http://localhost:4000/usuarios/" + code, {
+        headers: {
+          Authorization: 'Berer ' + state.token
+        }
+      })
+      if (res.status===200){
+        return res.data
+      }else{
+        await Swal.fire({
+          icon: 'error',
+          title: 'Algo salio mal',
+          text: 'No pudimos eliminar el usuario',
+          timer: 2000
+        });
+      }
+    } catch (e) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Algo salio mal',
+        text: 'No pudimos encontrar el usuario',
+        timer: 2000
+      });
+    }
+  }
+}
+userService.makeMicroaliado = async (code,fn)=>{
+  if (!code || code===''){
+    await Swal.fire({
+      icon: 'error',
+      title: 'Algo salio mal',
+      text: 'No ejecutar la tarea, comunicate con el administrador',
+      timer: 2000
+    });
+  }else{
+    try {
+      const res=await axios.post("http://localhost:4000/usuarios/convert/"+code,null,{
+        headers:{
+          Authorization:'Bearer '+state.token
+        }
+      })
+      if(res.status===200){
+        await Swal.fire({
+          title: 'Exitoso',
+          text: 'Funcion ejecutada con exito',
+          icon: 'success',
+          timer: 2000
+        }).then(fn());
+      }
+    }catch (e) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Algo salio mal',
+        text: 'No ejecutar la tarea, comunicate con el administrador',
+        timer: 2000
+      });
+    }
+  }
+}
 
 export {userService};
