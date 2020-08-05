@@ -89,12 +89,12 @@ class AssignMicroToSeller extends Component {
     this.setState({microally: microally})
   }
 
-  asignMicro = async ()=>{
-  await userService.asignMicroToSeller(this.state.seller.codigo,this.state.microally.codigo, this.cleanData)
+  asignMicro = async () => {
+    await userService.asignMicroToSeller(this.state.seller.codigo, this.state.microally.codigo, this.cleanData)
   }
 
-  cleanData= ()=>{
-    this.setState({seller:[],microally:[]})
+  cleanData = () => {
+    this.setState({seller: [], microally: []})
   }
 
   render() {
@@ -103,8 +103,10 @@ class AssignMicroToSeller extends Component {
           <SearchUserForm getUserByCode={this.getUserByCode} searchingUserToList={true}/>
           <div className="row">
             <div className="card" style={{width: "20rem", marginRight: "2rem"}}>
-              <center><img src={boss} className="card-img-top" alt="vendedor productos lacteos"
-                           style={{width: "8rem", padding: "1rem"}}/></center>
+              <div style={{display: 'flex', justifyContent: 'center'}}>
+                <img src={boss} className="card-img-top" alt="vendedor productos lacteos"
+                     style={{width: "8rem", padding: "1rem"}}/>
+              </div>
               <div className="card-body">
                 <b className="card-text" style={{fontSize: "20px"}}>Microaliado</b>
                 <p>Nombre: {this.state.microally.nombre}</p>
@@ -116,8 +118,10 @@ class AssignMicroToSeller extends Component {
               <img src={arrowRight} alt={"Flecha derecha asignando un microaliado a un vendedor de productos lacteos"}/>
             </div>
             <div className="card" style={{width: "20rem", marginRight: "2rem"}}>
-              <center><img src={seller} className="card-img-top" alt="vendedor productos lacteos"
-                           style={{width: "8rem", padding: "1rem"}}/></center>
+              <div style={{display: 'flex', justifyContent: 'center'}}>
+                <img src={seller} className="card-img-top" alt="vendedor productos lacteos"
+                     style={{width: "8rem", padding: "1rem"}}/>
+              </div>
               <div className="card-body">
                 <b className="card-text" style={{fontSize: "20px"}}>Vendedor</b>
                 <p>Nombre: {this.state.seller.nombre}</p>
@@ -127,7 +131,8 @@ class AssignMicroToSeller extends Component {
             </div>
             <div style={{display: "flex", alignItems: "center"}}>
               {this.state.seller.length !== 0 && this.state.microally.length !== 0 ?
-                  <button type="button" className="btn btn-primary btn-lg h-10 animate__animated animate__bounceInRight" onClick={this.asignMicro}>Confirmar</button> : null}
+                  <button type="button" className="btn btn-primary btn-lg h-10 animate__animated animate__bounceInRight"
+                          onClick={this.asignMicro}>Confirmar</button> : null}
             </div>
 
             <div className="card" style={{width: "18rem", marginTop: "2rem", marginRight: "11.2rem"}}>
@@ -136,14 +141,14 @@ class AssignMicroToSeller extends Component {
               </div>
               <ul className="list-group list-group-flush">
                 {this.state.listSellers.map(seller => (
-                    seller.codigoMicroaliadoEncargado ? null:
-                    <li className="list-group-item" key={seller._id}
-                        style={{display: "flex", justifyContent: "space-between"}}>{seller.nombre}
-                      <button type="button"
-                              className={seller._id === this.state.seller._id ? "btn btn-danger" : "btn btn-primary"}
-                              onClick={() => this.addSeller(seller)}>{seller._id === this.state.seller._id ? "Limpiar" : "Seleccionar"}
-                      </button>
-                    </li>
+                    seller.codigoMicroaliadoEncargado ? null :
+                        <li className="list-group-item" key={seller._id}
+                            style={{display: "flex", justifyContent: "space-between"}}>{seller.nombre}
+                          <button type="button"
+                                  className={seller._id === this.state.seller._id ? "btn btn-danger" : "btn btn-primary"}
+                                  onClick={() => this.addSeller(seller)}>{seller._id === this.state.seller._id ? "Limpiar" : "Seleccionar"}
+                          </button>
+                        </li>
                 ))}
               </ul>
             </div>

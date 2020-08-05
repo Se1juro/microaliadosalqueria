@@ -8,7 +8,7 @@ export default class SolicitarSoporte extends Component {
           Si tienes problemas recuerda comunicarte con el{' '}
           <strong>administrador</strong>
         </p>
-        <center>
+        <div style={{display:'flex', justifyContent:'center'}}>
           <img
             src={Admin}
             alt="Desarrollador web"
@@ -16,7 +16,7 @@ export default class SolicitarSoporte extends Component {
             width="100px"
             height="100px"
           />
-        </center>
+        </div>
         <button
           className="btn btn-primary btn-block"
           style={{ marginTop: '40px' }}

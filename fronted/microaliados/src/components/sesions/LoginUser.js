@@ -43,17 +43,15 @@ export default class LoginUser extends Component {
     const loading = this.state.loading;
     return (
         <div className="container col-md-6">
-          <div>
-            <center>
-              <img
-                  src={LogoProductos}
-                  alt="Inventario microaliados alqueria"
-                  width="120px"
-                  height="120px"
-                  style={{marginBottom: '10px'}}
-              />
-              <h3>Iniciar Sesion</h3>
-            </center>
+          <div style={{display: "flex", justifyContent: 'center'}}>
+            <img
+                src={LogoProductos}
+                alt="Inventario microaliados alqueria"
+                width="120px"
+                height="120px"
+                style={{marginBottom: '10px'}}
+            />
+            <h3>Iniciar Sesion</h3>
           </div>
           <form className="card" onSubmit={this.onSubmit}>
             <div className="card-body">
@@ -85,7 +83,7 @@ export default class LoginUser extends Component {
                 Iniciar Sesion
               </button>
               {loading ? (
-                  <center>
+                  <div style={{display: "flex", justifyContent: 'center'}}>
                     <Spinner
                         animation="border"
                         variant="primary"
@@ -93,7 +91,7 @@ export default class LoginUser extends Component {
                           marginTop: '10px',
                         }}
                     />
-                  </center>
+                  </div>
               ) : null}
             </div>
           </form>

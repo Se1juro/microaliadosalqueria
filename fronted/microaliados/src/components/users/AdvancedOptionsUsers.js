@@ -7,16 +7,16 @@ export default class AdvancedOptionsUsers extends Component {
     clicked: false,
     stateOfList: true,
   };
-  changeValueOfListUsers = () => {
+  changeValueOfListUsers = async () => {
     this.setState({
       clicked: !this.state.clicked,
       stateOfList: !this.state.stateOfList,
     });
-    this.props.changeValueOfUserList(this.state.stateOfList);
+    await this.props.changeValueOfUserList(this.state.stateOfList);
   };
 
-  showInputToSearchUser = () => {
-    this.props.searchUser();
+  showInputToSearchUser = async () => {
+    await this.props.searchUser();
   };
   render() {
     return (

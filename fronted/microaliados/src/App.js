@@ -12,9 +12,9 @@ import Routes from './components/Routes/Routes';
 function App() {
   return (
     <Router>
-      <Navigation></Navigation>
+      <Navigation/>
       <div className="container p-4">
-        <Routes></Routes>
+        <Routes/>
       </div>
     </Router>
   );
