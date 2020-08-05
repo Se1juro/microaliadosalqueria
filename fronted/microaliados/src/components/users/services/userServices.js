@@ -81,9 +81,9 @@ userService.searchByCode = async (code) => {
           Authorization: 'Berer ' + state.token
         }
       })
-      if (res.status===200){
+      if (res.status === 200) {
         return res.data
-      }else{
+      } else {
         await Swal.fire({
           icon: 'error',
           title: 'Algo salio mal',
@@ -101,22 +101,22 @@ userService.searchByCode = async (code) => {
     }
   }
 }
-userService.makeMicroaliado = async (code,fn)=>{
-  if (!code || code===''){
+userService.makeMicroaliado = async (code, fn) => {
+  if (!code || code === '') {
     await Swal.fire({
       icon: 'error',
       title: 'Algo salio mal',
       text: 'No ejecutar la tarea, comunicate con el administrador',
       timer: 2000
     });
-  }else{
+  } else {
     try {
-      const res=await axios.post("http://localhost:4000/usuarios/convert/"+code,null,{
-        headers:{
-          Authorization:'Bearer '+state.token
+      const res = await axios.post("http://localhost:4000/usuarios/convert/" + code, null, {
+        headers: {
+          Authorization: 'Bearer ' + state.token
         }
       })
-      if(res.status===200){
+      if (res.status === 200) {
         await Swal.fire({
           title: 'Exitoso',
           text: 'Funcion ejecutada con exito',
@@ -124,7 +124,7 @@ userService.makeMicroaliado = async (code,fn)=>{
           timer: 2000
         }).then(fn());
       }
-    }catch (e) {
+    } catch (e) {
       await Swal.fire({
         icon: 'error',
         title: 'Algo salio mal',
@@ -132,6 +132,40 @@ userService.makeMicroaliado = async (code,fn)=>{
         timer: 2000
       });
     }
+  }
+}
+userService.asignMicroToSeller = async (codeSeller, codeMicro,fn) => {
+  try {
+    const microally = {
+      codigo: codeMicro
+    }
+    const res = await axios.post("http://localhost:4000/usuarios/asignmicro/" + codeSeller, microally, {
+      headers: {
+        Authorization: 'Bearer ' + state.token
+      }
+    });
+    if (res.status === 200) {
+      await Swal.fire({
+        title: 'Exitoso',
+        text: 'Funcion ejecutada con exito',
+        icon: 'success',
+        timer: 3000
+      }).then(fn());
+    } else {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Algo salio mal',
+        text: 'No se ejecuto la tarea, comunicate con el administrador',
+        timer: 3000
+      });
+    }
+  } catch (e) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Algo salio mal',
+      text: 'No se ejecuto la tarea, comunicate con el administrador',
+      timer: 3000
+    });
   }
 }
 

@@ -7,7 +7,7 @@ class SearchUserForm extends Component {
   state = {
     codigo: '',
     searchingUserToList: this.props.searchingUserToList,
-    users:[]
+    users: []
   }
   onChangeForm = async (e) => {
     this.setState({
@@ -31,8 +31,8 @@ class SearchUserForm extends Component {
           timer: 2000,
         });
       }
-      this.setState({ users: newUser });
-      if (this.state.searchingUserToList){
+      this.setState({users: newUser});
+      if (this.state.searchingUserToList) {
         this.props.getUserByCode(newUser)
       }
     }
@@ -51,13 +51,15 @@ class SearchUserForm extends Component {
           <form onSubmit={this.searchUser}>
             <div className="form-group row">
               <label htmlFor="codigo" className="col-sm-2 col-form-label">Codigo</label>
-              <div className="col-md-4">
+              <div className="col-md-4 ">
                 <input type="text" className="form-control" id="codigo" name={"codigo"} onChange={this.onChangeForm}
                        value={this.state.codigo}/>
               </div>
-              <button type="submit" className="btn btn-primary mb-2">Buscar</button>
-              <button className="btn btn-primary mb-2" style={{marginLeft: "10px"}} onClick={this.cleanData}>Limpiar
-              </button>
+              <div className="col-md-4 m-auto" style={{margin:"1rem"}}>
+                <button type="submit" className="btn btn-primary mb-2">Buscar</button>
+                <button className="btn btn-primary mb-2" style={{marginLeft: "1rem"}} onClick={this.cleanData}>Limpiar
+                </button>
+              </div>
             </div>
           </form>
         </div>

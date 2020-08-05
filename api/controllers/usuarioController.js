@@ -6,6 +6,7 @@ const usuarioController = {};
 const BCRYPT_SALT_ROUNDS = 12;
 usuarioController.registrarUsusario = async (req, res, next) => {
   try {
+    console.log(req.body)
     const data = {
       codigo: req.body.codigo,
       password: req.body.password,
@@ -15,8 +16,10 @@ usuarioController.registrarUsusario = async (req, res, next) => {
       municipio: req.body.municipio,
       telefono: req.body.telefono,
     };
-    const usuarioExistente = usuarioModel.findOne({ codigo: data.codigo });
+    const usuarioExistente = await usuarioModel.findOne({ codigo: data.codigo });
     if (usuarioExistente) {
+      console.log(usuarioExistente)
+      console.log("Entro")
       return res.status(409).json({
         status: 'Error',
         mensaje: 'Ya existe un usuario con este codigo.',
