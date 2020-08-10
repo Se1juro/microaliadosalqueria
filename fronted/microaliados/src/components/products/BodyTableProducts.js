@@ -12,7 +12,6 @@ class BodyTableProducts extends Component {
   deleteProduct = async (id) => {
     await productsServices.deleteProduct(id,this.props.onChange)
   };
-
   render() {
     return (
         <tbody>

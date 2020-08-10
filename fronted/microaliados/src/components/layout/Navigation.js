@@ -48,7 +48,6 @@ export default class Navigation extends Component {
                 {logged && isAdmin ? (
                     <NavBarAdmins/>
                 ) : null}
-
                 {logged ? (
                     <li className="nav-item">
                       <b className="nav-link disabled" style={{color: 'white'}}>
