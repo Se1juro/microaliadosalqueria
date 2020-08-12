@@ -25,6 +25,9 @@ class NavBarAdmins extends Component {
             <NavLink className="dropdown-item" exact to="/usuarios" activeClassName="main-nav-active">
               Usuarios
             </NavLink>
+            <NavLink className="dropdown-item" exact to="/productos" activeClassName="main-nav-active">
+              Productos
+            </NavLink>
           </div>
         </li>
     );

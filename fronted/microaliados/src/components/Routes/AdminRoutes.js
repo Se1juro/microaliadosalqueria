@@ -7,8 +7,10 @@ import AssignMicroToSeller from "../users/AssignMicroToSeller";
 
 const isAdmin = () => {
   const token = jwt.decode(localStorage.getItem('token'));
-  return token.rol === 'admin';
-
+  if (token){
+    return token.rol === 'admin';
+  }
+  return false
 };
 
 const MyRoute = (props) =>

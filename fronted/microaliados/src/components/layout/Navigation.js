@@ -5,6 +5,7 @@ import NavBarAdmins from "./NavBarAdmins";
 import ButtonNavBar from "./ButtonNavBar";
 import {NavLink} from "react-router-dom";
 import Logout from "../sesions/Logout";
+import NavBarMicroAlly from "./NavBarMicroAlly";
 
 export default class Navigation extends Component {
   state = {
@@ -23,7 +24,7 @@ export default class Navigation extends Component {
     }
   }
 
-  changeValueOfSession =  () => {
+  changeValueOfSession = () => {
     this.setState({logged: false, isAdmin: false})
   }
 
@@ -45,6 +46,8 @@ export default class Navigation extends Component {
                     Home
                   </NavLink>
                 </li>
+                {logged && !isAdmin ?
+                <NavBarMicroAlly/>: null}
                 {logged && isAdmin ? (
                     <NavBarAdmins/>
                 ) : null}

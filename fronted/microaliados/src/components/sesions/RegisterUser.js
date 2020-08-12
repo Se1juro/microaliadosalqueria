@@ -108,7 +108,7 @@ export default class RegisterUser extends Component {
     return (
       <div className="container col-md-6">
         <div>
-          <center>
+          <div style={{display:"flex",alignContent:"center"}}>
             <img
               src={LogoProductos}
               alt="Inventario microaliados alqueria"
@@ -117,7 +117,7 @@ export default class RegisterUser extends Component {
               style={{ marginBottom: '10px' }}
             />
             <h3>Registrarse</h3>
-          </center>
+          </div>
         </div>
         <form className="card" onSubmit={this.onSubmit}>
           <div className="card-body">
@@ -186,6 +186,7 @@ export default class RegisterUser extends Component {
                 onChange={this.onInputChange}
                 value={this.state.municipio}
               >
+                <option>Seleccionar</option>
                 {this.createSelectMunicipio(department)}
               </select>
             </div>
@@ -205,19 +206,19 @@ export default class RegisterUser extends Component {
               Registrarse
             </button>
             {loading ? (
-              <center>
+              <div style={{display:"Flex", justifyContent:"center"}}>
                 <Spinner
                   animation="border"
                   variant="primary"
                   style={{ marginTop: '10px' }}
                 />
-              </center>
+              </div>
             ) : null}
           </div>
         </form>
         <div className="card" style={{ marginTop: '15px' }}>
           <div className="card-body">
-            ¿Nuevo en la aplicacion? <Link to="/register">Registrate</Link>
+            ¿Ya tienes una cuenta? <Link to="/login">Inicia Sesion</Link>
           </div>
         </div>
       </div>

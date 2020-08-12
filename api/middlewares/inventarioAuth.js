@@ -31,8 +31,6 @@ inventarioAuth.canViewInventory = async (req, res, next) => {
       const inventario = await inventarioModel.findOne({
         codigoUsuario: codigoUsuario,
       });
-      console.log(decoded);
-      console.log(inventario);
       if (!inventario) {
         return res.status(409).json({
           status: 'Error',

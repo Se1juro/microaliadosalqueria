@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch} from 'react-router-dom';
 
 //RUTAS//
 import ProductList from '../products/ProductsList';
@@ -8,31 +8,50 @@ import LoginUser from '../sesions/LoginUser';
 import NotFound from '../404NotFound';
 import Home from '../Home';
 import LogOut from '../sesions/Logout';
-import AuthLogin from '../auth/AuthLogin';
-import BackLogin from '../auth/backLogin';
 import AdminRoutes from "./AdminRoutes";
+import Inventory from "../inventory/Inventory";
+
+const isLogged = () => {
+  if (!localStorage.getItem("token")){
+    return false
+  }
+  return true
+}
+
+const RouteSesions = (props) =>
+  isLogged() ? <Redirect to="/"/>:<Route {...props}/> ;
+
+const SecureRoute = (props) =>
+    isLogged() ?<Route {...props}/>: <Redirect to="/"/>;
 
 export default function Routes() {
+  if (!isLogged()){
+    console.log("Hola")
+  }
   return (
       <Switch>
         <Route path="/" exact component={Home}/>
-        <Route
+        <SecureRoute
             path="/productos"
             exact
-            component={(props) => <AuthLogin {...props} Component={ProductList}/>}
+            component={ProductList}
         />
-        <Route
+        <RouteSesions
             path="/register"
-            component={(props) => <BackLogin {...props} Component={RegisterUser}/>}
+            exact
+            component={RegisterUser}
         />
-        <Route
+        <RouteSesions
             path="/login"
             exact
-            component={(props) => <BackLogin {...props} Component={LoginUser}/>}
+            component={LoginUser}
         />
-        <Route path="/logout" component={LogOut}/>
+        <SecureRoute path="/inventario/:id"
+                     exact
+                     component={Inventory}/>
+        <SecureRoute path="/logout" component={LogOut}/>
         <AdminRoutes/>
-        <Route component={NotFound}/>
+        <SecureRoute component={NotFound}/>
       </Switch>
   );
 }

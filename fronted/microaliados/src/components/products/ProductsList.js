@@ -55,7 +55,7 @@ export default class ProductsList extends Component {
                     <th scope="col">Descripcion</th>
                     <th scope="col">IVA</th>
                     <th scope="col">Precio Unitario</th>
-                    <th scope="col">Opciones</th>
+                    {this.state.isAdmin ?<th scope="col">Opciones</th>:null}
                   </tr>
                   </thead>
                   <BodyTableProducts productos={this.state.productos} onChange={this.getProducts}/>

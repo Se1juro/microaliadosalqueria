@@ -91,6 +91,7 @@ class AssignMicroToSeller extends Component {
 
   asignMicro = async () => {
     await userService.asignMicroToSeller(this.state.seller.codigo, this.state.microally.codigo, this.cleanData)
+    await this.getUsers();
   }
 
   cleanData = () => {

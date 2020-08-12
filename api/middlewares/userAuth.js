@@ -32,6 +32,7 @@ userAuth.canViewUser = async (req, res, next) => {
 userAuth.datosRegister = async (req, res, next) => {
   try {
     const data = Object.values(req.body);
+    console.log(data)
     for (const iterator of data) {
       if (iterator === '' || iterator === undefined) {
         return res.status(409).json({

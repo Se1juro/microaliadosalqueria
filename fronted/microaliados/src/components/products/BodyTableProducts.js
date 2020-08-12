@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import {productsServices} from "./services/productsServices";
-
+import jwt from 'jsonwebtoken'
 class BodyTableProducts extends Component {
+  state={
+    isAdmin:false,
+  }
   formatProductDescription = (productDescription) => {
     if (productDescription.length > 15) {
       return productDescription.substr(0, 10) + "..."
@@ -12,6 +15,13 @@ class BodyTableProducts extends Component {
   deleteProduct = async (id) => {
     await productsServices.deleteProduct(id,this.props.onChange)
   };
+  componentDidMount() {
+    const token = jwt.decode(localStorage.getItem("token"))
+    if (token.rol==='admin'){
+      this.setState({isAdmin:true})
+    }
+  }
+
   render() {
     return (
         <tbody>
@@ -20,8 +30,8 @@ class BodyTableProducts extends Component {
               <td className={producto.estado ? null : 'text-danger'}>{producto.codigoReferencia}</td>
               <td>{this.formatProductDescription(producto.descripcion)}</td>
               <td>{producto.aplicaIva ? 'Si' : 'No'}</td>
-              <td>{producto.precioUnitario}</td>
-              <td>
+              <td style={{display:"flex",justifyContent:"center"}}>{producto.precioUnitario}</td>
+              {this.state.isAdmin ? <td>
                 <button
                     className="btn btn-danger"
                     onClick={() => this.deleteProduct(producto.codigoReferencia)}
@@ -35,7 +45,8 @@ class BodyTableProducts extends Component {
                 >
                   Actualizar
                 </Link>
-              </td>
+              </td>:null}
+
             </tr>
         ))}
         </tbody>
