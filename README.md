@@ -8,6 +8,13 @@ Este sistema esta diseñado para los clientes que anteriormente organizaban sus 
 1. npm install
 2. npm start | npm run dev
 
+# REQUIREMENTS
+
+1. [NodeJS]: https://nodejs.org/en/
+2. NPM
+3. [MongoDB]: https://www.mongodb.com/try/download/community?tck=docs_server
+
+
 # SCREENS
 
 ![LIST PRODUCTS](https://github.com/Se1juro/microaliadosalqueria/blob/master/screens/Screenshot_1.png?raw=true)
