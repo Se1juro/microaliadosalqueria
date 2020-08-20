@@ -10,9 +10,9 @@ Este sistema esta diseñado para los clientes que anteriormente organizaban sus 
 
 # REQUIREMENTS
 
-1. [NodeJS]: https://nodejs.org/en/
+1. [NodeJS](https://nodejs.org/en/)
 2. NPM
-3. [MongoDB]: https://www.mongodb.com/try/download/community?tck=docs_server
+3. [MongoDB](https://www.mongodb.com/try/download/community?tck=docs_server)
 
 
 # SCREENS
