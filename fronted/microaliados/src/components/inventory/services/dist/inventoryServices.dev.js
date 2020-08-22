@@ -39,3 +39,36 @@ inventoryServices.getInventory = function _callee(codigoReferencia) {
     }
   });
 };
+
+inventoryServices.addedProductToInventory = function _callee2(userId, product, count) {
+  var newData, res;
+  return regeneratorRuntime.async(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          newData = {
+            codigoUsuario: userId,
+            productos: {
+              nomProduct: product.descripcion,
+              id: product.codigoReferencia,
+              cantidad: count
+            }
+          };
+          _context2.next = 3;
+          return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:4000/inventario/', newData, {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          }));
+
+        case 3:
+          res = _context2.sent;
+          return _context2.abrupt("return", res);
+
+        case 5:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  });
+};

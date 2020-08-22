@@ -16,4 +16,20 @@ inventoryServices.getInventory = async (codigoReferencia) => {
   );
   return res.data;
 };
+inventoryServices.addedProductToInventory = async (userId, product, count) => {
+  const newData = {
+    codigoUsuario: userId,
+    productos: {
+      nomProduct: product.descripcion,
+      id: product.codigoReferencia,
+      cantidad: count,
+    },
+  };
+  const res = await axios.post('http://localhost:4000/inventario/', newData, {
+    headers: {
+      Authorization: 'Bearer ' + state.token,
+    },
+  });
+  return res;
+};
 export { inventoryServices };
