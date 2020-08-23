@@ -19,6 +19,7 @@ class Inventory extends Component {
     countSelect: 0,
     totalProducts: [],
     limitItem: 5,
+    productsToFilter: [],
   };
 
   async componentDidMount() {
@@ -44,7 +45,8 @@ class Inventory extends Component {
       } else {
         res = await inventoryServices.getInventory(this.props.match.params.id);
       }
-
+      console.log(res);
+      this.setState({ productsToFilter: res.inventario[0].productos });
       this.setState({ products: res.productsToFront });
       this.setState({ inventory: res.inventario });
       this.setState({ loadingData: false });
@@ -235,7 +237,7 @@ class Inventory extends Component {
                 ) : (
                   <ProductsList
                     support="col-md-12 cold-md-offset-3 modal-lg"
-                    products={this.state.products}
+                    products={this.state.productsToFilter}
                     userId={this.props.match.params.id}
                     updateData={this.getInventory}
                   />
