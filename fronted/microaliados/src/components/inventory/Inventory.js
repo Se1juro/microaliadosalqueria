@@ -45,7 +45,6 @@ class Inventory extends Component {
       } else {
         res = await inventoryServices.getInventory(this.props.match.params.id);
       }
-      console.log(res);
       this.setState({ productsToFilter: res.inventario[0].productos });
       this.setState({ products: res.productsToFront });
       this.setState({ inventory: res.inventario });
@@ -70,6 +69,7 @@ class Inventory extends Component {
   };
 
   selectNumPage = async (numPage) => {
+    await this.setState({ currentPage: numPage });
     await this.getInventory(numPage, this.state.limitItem);
   };
   onInputChange = async (e) => {
@@ -80,6 +80,15 @@ class Inventory extends Component {
   };
   openWindow = () => {
     this.setState({ openWindowProducts: !this.state.openWindowProducts });
+  };
+  movePages = async (instruction) => {
+    if (instruction === 'next') {
+      await this.setState({ currentPage: this.state.currentPage + 1 });
+      await this.getInventory(this.state.currentPage, this.state.limitItem);
+    } else {
+      await this.setState({ currentPage: this.state.currentPage - 1 });
+      await this.getInventory(this.state.currentPage, this.state.limitItem);
+    }
   };
 
   render() {
@@ -177,12 +186,20 @@ class Inventory extends Component {
             </div>
             <nav aria-label="Page navigation example">
               <ul className="pagination">
-                <li className="page-item">
-                  <button className="page-link" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span className="sr-only">Previous</span>
-                  </button>
-                </li>
+                {this.state.currentPage === 1 ? null : (
+                  <li className="page-item">
+                    <button
+                      className="page-link"
+                      aria-label="Previous"
+                      id="previous"
+                      onClick={() => this.movePages('prev')}
+                    >
+                      <span aria-hidden="true">&laquo;</span>
+                      <span className="sr-only">Previous</span>
+                    </button>
+                  </li>
+                )}
+
                 {rowsPagination.map((row) => (
                   <li className="page-item" key={row}>
                     <button
@@ -193,12 +210,19 @@ class Inventory extends Component {
                     </button>
                   </li>
                 ))}
-                <li className="page-item">
-                  <button className="page-link" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span className="sr-only">Next</span>
-                  </button>
-                </li>
+                {this.state.currentPage === this.state.totalPage ? null : (
+                  <li className="page-item">
+                    <button
+                      className="page-link"
+                      aria-label="Next"
+                      id="next"
+                      onClick={() => this.movePages('next')}
+                    >
+                      <span aria-hidden="true">&raquo;</span>
+                      <span className="sr-only">Next</span>
+                    </button>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
