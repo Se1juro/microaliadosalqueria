@@ -13,6 +13,12 @@ class Inventory extends Component {
     loadingData: true,
     width: window.innerWidth,
     openWindowProducts: false,
+    currentPage: 1,
+    totalPage: 2,
+    rows: [],
+    countSelect: 0,
+    totalProducts: [],
+    limitItem: 5,
   };
 
   async componentDidMount() {
@@ -26,17 +32,50 @@ class Inventory extends Component {
       return { width: 300, displayDirection: 'column' };
     }
   };
-  getInventory = async () => {
+  getInventory = async (numPages, limitItems) => {
     if (this.props.match.params.id) {
-      const res = await inventoryServices.getInventory(
-        this.props.match.params.id
-      );
-      this.setState({ products: res.inventario[0].productos });
+      let res;
+      if (numPages && limitItems) {
+        res = await inventoryServices.getInventory(
+          this.props.match.params.id,
+          numPages,
+          limitItems
+        );
+      } else {
+        res = await inventoryServices.getInventory(this.props.match.params.id);
+      }
+
+      this.setState({ products: res.productsToFront });
       this.setState({ inventory: res.inventario });
       this.setState({ loadingData: false });
+      this.setState({ totalPage: res.totalPages });
+      this.setState({ countSelect: res.totalDocuments });
+      this.generatePagination();
     }
   };
 
+  generatePagination = () => {
+    let rows = [];
+    for (let i = 1; i <= this.state.totalPage; i++) {
+      rows.push(i);
+    }
+    let totalProducts = [];
+    for (let x = 1; x <= this.state.countSelect; x++) {
+      totalProducts.push(x);
+    }
+    this.setState({ totalProducts });
+    this.setState({ rows });
+  };
+
+  selectNumPage = async (numPage) => {
+    await this.getInventory(numPage, this.state.limitItem);
+  };
+  onInputChange = async (e) => {
+    await this.setState({
+      [e.target.name]: e.target.value,
+    });
+    await this.getInventory(this.state.currentPage, this.state.limitItem);
+  };
   openWindow = () => {
     this.setState({ openWindowProducts: !this.state.openWindowProducts });
   };
@@ -44,6 +83,7 @@ class Inventory extends Component {
   render() {
     const inventario = this.state.inventory;
     const loadingData = this.state.loadingData;
+    const rowsPagination = this.state.rows;
     return (
       <div className="row">
         <div className="card col-md-6" style={{ width: this.fixCardWidth }}>
@@ -86,18 +126,30 @@ class Inventory extends Component {
               Cantidad de productos:{' '}
               {!loadingData ? inventario[0].productos.length : 'Loading...'}
             </h6>
+            <h6>Numero de items</h6>
+            <select
+              id="limitItem"
+              className="form-control col-md-3"
+              name="limitItem"
+              onChange={this.onInputChange}
+            >
+              {this.state.totalProducts.map((product) => (
+                <option key={product} value={product}>
+                  {product}
+                </option>
+              ))}
+            </select>
             <hr />
             <div className="card-text">
               {this.state.products.map((product) => (
                 <div key={product.id} style={{ display: 'flex' }}>
                   <div style={{ width: '440px' }}>
-                    ➽{' '}
+                    •{' '}
                     <label style={{ marginRight: '5px' }}>
                       {product.nomProduct}
                     </label>{' '}
-                    - <b style={{ margin: '10px' }}>Codigo:</b> {product.id} -
-                    <b style={{ margin: '10px' }}> Cantidad: </b>{' '}
-                    {product.cantidad}{' '}
+                    - <b style={{ margin: '10px' }}>Cod N°:</b> {product.id} -
+                    <b style={{ margin: '10px' }}> Cant: </b> {product.cantidad}{' '}
                   </div>
                   <div>
                     <button
@@ -121,6 +173,32 @@ class Inventory extends Component {
                 </div>
               ))}
             </div>
+            <nav aria-label="Page navigation example">
+              <ul className="pagination">
+                <li className="page-item">
+                  <button className="page-link" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span className="sr-only">Previous</span>
+                  </button>
+                </li>
+                {rowsPagination.map((row) => (
+                  <li className="page-item" key={row}>
+                    <button
+                      className="page-link"
+                      onClick={() => this.selectNumPage(row)}
+                    >
+                      {row}
+                    </button>
+                  </li>
+                ))}
+                <li className="page-item">
+                  <button className="page-link" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span className="sr-only">Next</span>
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
         <div>

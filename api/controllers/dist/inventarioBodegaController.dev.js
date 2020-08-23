@@ -8,49 +8,60 @@ var distribucionModel = require('../models/distribucionModel');
 
 var usuarioModel = require('../models/usuarioModel');
 
+var _require = require('../models/inventarioModel'),
+    where = _require.where;
+
 var inventarioController = {};
 
 inventarioController.getInventarioByUser = function _callee(req, res, next) {
-  var codigoUsuario, inventario, mapProducts, productosArray, productsInInventory;
+  var paginate, codigoUsuario, inventario, mapProducts, productosArray, productsInInventory, limit, page, productsToFront;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
+
+          paginate = function paginate(array, page_size, page_number) {
+            return array.slice((page_number - 1) * page_size, page_number * page_size);
+          };
+
           codigoUsuario = req.params.id;
-          _context.next = 4;
+          _context.next = 5;
           return regeneratorRuntime.awrap(inventarioModel.find({
             codigoUsuario: codigoUsuario
           }));
 
-        case 4:
+        case 5:
           inventario = _context.sent;
           mapProducts = inventario[0].productos;
           productosArray = [];
           mapProducts.forEach(function (element) {
             productosArray.push(element.id);
           });
-          _context.next = 10;
-          return regeneratorRuntime.awrap(productoModel.find().where('codigoReferencia')["in"](productosArray).exec());
-
-        case 10:
-          productsInInventory = _context.sent;
+          productsInInventory = inventario[0].productos;
+          limit = parseInt(req.query.limit || 5);
+          page = parseInt(req.query.page || 1);
+          productsToFront = paginate(productsInInventory, limit, page);
           return _context.abrupt("return", res.status(200).json({
             inventario: inventario,
-            productsInInventory: productsInInventory
+            productsToFront: productsToFront,
+            currentPage: page,
+            totalPages: Math.ceil(productsInInventory.length / limit),
+            totalDocuments: productsInInventory.length,
+            itemForPage: limit
           }));
 
-        case 14:
-          _context.prev = 14;
+        case 16:
+          _context.prev = 16;
           _context.t0 = _context["catch"](0);
           next(_context.t0);
 
-        case 17:
+        case 19:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 14]]);
+  }, null, null, [[0, 16]]);
 };
 
 inventarioController.crearInventario = function _callee2(req, res, next) {

@@ -15,24 +15,44 @@ var state = {
   token: localStorage.getItem('token')
 };
 
-inventoryServices.getInventory = function _callee(codigoReferencia) {
+inventoryServices.getInventory = function _callee(codigoReferencia, numPage, limitItems) {
   var res;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          _context.next = 2;
+          if (!(numPage && limitItems)) {
+            _context.next = 6;
+            break;
+          }
+
+          _context.next = 3;
+          return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:4000/inventario/' + codigoReferencia + '?page=' + numPage + '&limit=' + limitItems, {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          }));
+
+        case 3:
+          res = _context.sent;
+          _context.next = 9;
+          break;
+
+        case 6:
+          _context.next = 8;
           return regeneratorRuntime.awrap(_axios["default"].get('http://localhost:4000/inventario/' + codigoReferencia, {
             headers: {
               Authorization: 'Bearer ' + state.token
             }
           }));
 
-        case 2:
+        case 8:
           res = _context.sent;
+
+        case 9:
           return _context.abrupt("return", res.data);
 
-        case 4:
+        case 10:
         case "end":
           return _context.stop();
       }

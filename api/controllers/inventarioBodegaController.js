@@ -2,6 +2,7 @@ const inventarioModel = require('../models/inventarioModel');
 const productoModel = require('../models/productoModel');
 const distribucionModel = require('../models/distribucionModel');
 const usuarioModel = require('../models/usuarioModel');
+const { where } = require('../models/inventarioModel');
 const inventarioController = {};
 
 inventarioController.getInventarioByUser = async (req, res, next) => {
@@ -15,12 +16,25 @@ inventarioController.getInventarioByUser = async (req, res, next) => {
     mapProducts.forEach((element) => {
       productosArray.push(element.id);
     });
-    const productsInInventory = await productoModel
-      .find()
-      .where('codigoReferencia')
-      .in(productosArray)
-      .exec();
-    return res.status(200).json({ inventario, productsInInventory });
+    let productsInInventory = inventario[0].productos;
+    let limit = parseInt(req.query.limit || 5);
+    let page = parseInt(req.query.page || 1);
+    function paginate(array, page_size, page_number) {
+      return array.slice(
+        (page_number - 1) * page_size,
+        page_number * page_size
+      );
+    }
+
+    let productsToFront = paginate(productsInInventory, limit, page);
+    return res.status(200).json({
+      inventario,
+      productsToFront,
+      currentPage: page,
+      totalPages: Math.ceil(productsInInventory.length / limit),
+      totalDocuments: productsInInventory.length,
+      itemForPage: limit,
+    });
   } catch (error) {
     next(error);
   }

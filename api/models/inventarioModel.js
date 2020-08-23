@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
 const inventarioSchema = new Schema({
   productos: {
     type: Array,
