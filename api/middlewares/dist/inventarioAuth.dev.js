@@ -107,19 +107,20 @@ inventarioAuth.canViewInventory = function _callee4(req, res, next) {
 
                   case 8:
                     if (!(inventario.codigoUsuario !== decoded.codigoReferencia)) {
-                      _context3.next = 10;
+                      _context3.next = 11;
                       break;
                     }
 
+                    console.log('No puedo acceder al inventario');
                     return _context3.abrupt("return", res.status(401).json({
                       status: 'Error',
                       mensaje: 'No puedes acceder a este inventario'
                     }));
 
-                  case 10:
+                  case 11:
                     next();
 
-                  case 11:
+                  case 12:
                   case "end":
                     return _context3.stop();
                 }

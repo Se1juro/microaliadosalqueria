@@ -61,39 +61,148 @@ inventoryServices.getInventory = function _callee(codigoReferencia, numPage, lim
 };
 
 inventoryServices.addedProductToInventory = function _callee2(userId, product, count) {
-  var newData, res;
+  var stock, newData, res;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
+          stock = parseInt(count);
           newData = {
             codigoUsuario: userId,
             productos: {
               nomProduct: product.descripcion,
               id: product.codigoReferencia,
-              cantidad: count
+              cantidad: stock
             }
           };
-          _context2.next = 4;
+          _context2.next = 5;
           return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:4000/inventario/', newData, {
             headers: {
               Authorization: 'Bearer ' + state.token
             }
           }));
 
-        case 4:
+        case 5:
           res = _context2.sent;
           return _context2.abrupt("return", res);
 
-        case 8:
-          _context2.prev = 8;
+        case 9:
+          _context2.prev = 9;
           _context2.t0 = _context2["catch"](0);
           return _context2.abrupt("return", _context2.t0);
 
-        case 11:
+        case 12:
         case "end":
           return _context2.stop();
+      }
+    }
+  }, null, null, [[0, 9]]);
+};
+
+inventoryServices.deleteProductOfInventory = function _callee3(idInventory, codeProduct) {
+  var data, res;
+  return regeneratorRuntime.async(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          data = {
+            codigoProducto: codeProduct
+          };
+          _context3.prev = 1;
+          _context3.next = 4;
+          return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:4000/inventario/".concat(idInventory), data, {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          }));
+
+        case 4:
+          res = _context3.sent;
+          return _context3.abrupt("return", res);
+
+        case 8:
+          _context3.prev = 8;
+          _context3.t0 = _context3["catch"](1);
+          return _context3.abrupt("return", _context3.t0);
+
+        case 11:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, null, null, [[1, 8]]);
+};
+
+inventoryServices.increaseStock = function _callee4(idInventario, idUser, codeProduct, cant) {
+  var stock, data, res;
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
+          stock = parseInt(cant);
+          data = {
+            codigoUsuario: idUser,
+            productos: [{
+              id: codeProduct,
+              cantidad: stock
+            }]
+          };
+          _context4.next = 5;
+          return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:4000/inventario/agregar/".concat(idInventario), data, {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          }));
+
+        case 5:
+          res = _context4.sent;
+          return _context4.abrupt("return", res);
+
+        case 9:
+          _context4.prev = 9;
+          _context4.t0 = _context4["catch"](0);
+          return _context4.abrupt("return", _context4.t0);
+
+        case 12:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, null, null, [[0, 9]]);
+};
+
+inventoryServices.subtractStock = function _callee5(idUsario, idProduct, stock) {
+  var data, res;
+  return regeneratorRuntime.async(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.prev = 0;
+          data = {
+            codigoProducto: idProduct,
+            cantidad: stock
+          };
+          _context5.next = 4;
+          return regeneratorRuntime.awrap(_axios["default"].put("http://localhost:4000/inventario/restar/".concat(idUsario), data, {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          }));
+
+        case 4:
+          res = _context5.sent;
+          return _context5.abrupt("return", res);
+
+        case 8:
+          _context5.prev = 8;
+          _context5.t0 = _context5["catch"](0);
+          return _context5.abrupt("return", _context5.t0);
+
+        case 11:
+        case "end":
+          return _context5.stop();
       }
     }
   }, null, null, [[0, 8]]);

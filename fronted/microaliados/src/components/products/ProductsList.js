@@ -9,6 +9,7 @@ import { productsServices } from './services/productsServices';
 import { StatePagination } from '../customState/StatePagination';
 import Pagination from '../pagination/Pagination';
 import SelectPagination from '../pagination/SelectPagination';
+import SearchProductForm from './SearchProductForm';
 
 export default class ProductsList extends Component {
   state = {
@@ -94,6 +95,12 @@ export default class ProductsList extends Component {
     });
     await this.getProducts(this.state.currentPage, this.state.limitItem);
   };
+  getProductByCode = async (product) => {
+    if (product === undefined) {
+      return await this.getProducts();
+    }
+    this.setState({ productos: product });
+  };
 
   render() {
     const loading = this.state.loading;
@@ -113,6 +120,10 @@ export default class ProductsList extends Component {
             limitItem={this.state.limitItem}
             totalDocs={this.state.totalDocs}
           />
+          <SearchProductForm
+            getProductByCode={this.getProductByCode}
+            searchingProductToList={true}
+          ></SearchProductForm>
           {loading ? (
             <Spinner
               animation="border"
@@ -138,6 +149,8 @@ export default class ProductsList extends Component {
                 onChange={this.getProducts}
                 userId={this.props.userId}
                 updateData={this.props.updateData}
+                productsToFilter={this.props.products}
+                inventoryId={this.props.inventoryId}
               />
             </table>
           )}

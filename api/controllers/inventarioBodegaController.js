@@ -113,6 +113,8 @@ inventarioController.eliminarProductoInventario = async (req, res, next) => {
   try {
     const codigoProducto = req.body.codigoProducto;
     let productoExiste = false;
+    console.log(req.params.id);
+    console.log(req.body);
     const inventario = await inventarioModel.findById(req.params.id);
     for (const iterator of inventario.productos) {
       if (iterator.id === codigoProducto) {
@@ -120,6 +122,7 @@ inventarioController.eliminarProductoInventario = async (req, res, next) => {
       }
     }
     if (productoExiste === false) {
+      console.log('no esta en inventario');
       return res.status(409).json({
         status: 'Error',
         mensaje: 'El producto no se encuentra en tu inventario',
@@ -175,7 +178,7 @@ inventarioController.restarCantidadProducto = async (req, res, next) => {
     );
     res.status(200).json({
       status: 'Success',
-      mensaje: 'Se ha restado a la cantidad del producto en tu inventario',
+      message: 'Se ha restado a la cantidad del producto en tu inventario',
       resultado,
     });
   } catch (error) {
@@ -227,7 +230,7 @@ inventarioController.aumentarExistencia = async (req, res, next) => {
       }
       return res.status(200).json({
         status: 'Success',
-        mensaje: 'Inventario actualizado con exito',
+        message: 'Inventario actualizado con exito',
       });
     }
   } catch (error) {

@@ -290,7 +290,7 @@ productsServices.createProduct = function _callee5(newProduct) {
         case 5:
           _context5.prev = 5;
           _context5.t0 = _context5["catch"](0);
-          console.log(JSON.stringify(_context5.t0));
+          return _context5.abrupt("return", _context5.t0);
 
         case 8:
         case "end":
@@ -298,4 +298,35 @@ productsServices.createProduct = function _callee5(newProduct) {
       }
     }
   }, null, null, [[0, 5]]);
+};
+
+productsServices.getProductByCode = function _callee6(productId) {
+  var res;
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.prev = 0;
+          _context6.next = 3;
+          return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:4000/".concat(productId), {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          }));
+
+        case 3:
+          res = _context6.sent;
+          return _context6.abrupt("return", res);
+
+        case 7:
+          _context6.prev = 7;
+          _context6.t0 = _context6["catch"](0);
+          return _context6.abrupt("return", _context6.t0);
+
+        case 10:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
 };

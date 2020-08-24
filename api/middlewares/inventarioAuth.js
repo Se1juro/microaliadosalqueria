@@ -38,6 +38,7 @@ inventarioAuth.canViewInventory = async (req, res, next) => {
         });
       } else {
         if (inventario.codigoUsuario !== decoded.codigoReferencia) {
+          console.log('No puedo acceder al inventario');
           return res.status(401).json({
             status: 'Error',
             mensaje: 'No puedes acceder a este inventario',

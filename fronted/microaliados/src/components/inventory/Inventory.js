@@ -11,7 +11,6 @@ import SelectPagination from '../pagination/SelectPagination';
 import ManageProduct from './ManageProduct';
 class Inventory extends Component {
   state = {
-    codigoReferencia: '',
     products: [],
     inventory: [],
     loadingData: true,
@@ -25,6 +24,7 @@ class Inventory extends Component {
     limitItem: 5,
     productsToFilter: [],
     openEditProduct: false,
+    currentProduct: {},
   };
 
   async componentDidMount() {
@@ -50,12 +50,14 @@ class Inventory extends Component {
       } else {
         res = await inventoryServices.getInventory(this.props.match.params.id);
       }
-      this.setState({ productsToFilter: res.inventario[0].productos });
-      this.setState({ products: res.productsToFront });
-      this.setState({ inventory: res.inventario });
-      this.setState({ loadingData: false });
-      this.setState({ totalPage: res.totalPages });
-      this.setState({ countSelect: res.totalDocuments });
+      this.setState({
+        productsToFilter: res.inventario[0].productos,
+        products: res.productsToFront,
+        inventory: res.inventario,
+        loadingData: false,
+        totalPage: res.totalPages,
+        countSelect: res.totalDocuments,
+      });
       this.generatePagination();
     }
   };
@@ -93,8 +95,11 @@ class Inventory extends Component {
       await this.getInventory(this.state.currentPage, this.state.limitItem);
     }
   };
-  openEditProduct = () => {
-    this.setState({ openEditProduct: !this.state.openEditProduct });
+  openEditProduct = async (product) => {
+    await this.setState({
+      openEditProduct: !this.state.openEditProduct,
+      currentProduct: product,
+    });
   };
 
   render() {
@@ -168,7 +173,7 @@ class Inventory extends Component {
                       style={{
                         height: '30px',
                       }}
-                      onClick={this.openEditProduct}
+                      onClick={() => this.openEditProduct(product)}
                     >
                       {' '}
                       <FontAwesomeIcon
@@ -231,6 +236,7 @@ class Inventory extends Component {
                     products={this.state.productsToFilter}
                     userId={this.props.match.params.id}
                     updateData={this.getInventory}
+                    inventoryId={inventario[0]}
                   />
                 )}
               </Modal.Body>
@@ -239,6 +245,10 @@ class Inventory extends Component {
             <ManageProduct
               open={this.state.openEditProduct}
               close={this.openEditProduct}
+              product={this.state.currentProduct}
+              inventarioId={inventario[0]}
+              getData={this.getInventory}
+              userId={this.props.match.params.id}
             />
           </div>
         </div>

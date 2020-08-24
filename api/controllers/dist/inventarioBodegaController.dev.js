@@ -255,15 +255,17 @@ inventarioController.eliminarProductoInventario = function _callee3(req, res, ne
           _context3.prev = 0;
           codigoProducto = req.body.codigoProducto;
           productoExiste = false;
-          _context3.next = 5;
+          console.log(req.params.id);
+          console.log(req.body);
+          _context3.next = 7;
           return regeneratorRuntime.awrap(inventarioModel.findById(req.params.id));
 
-        case 5:
+        case 7:
           inventario = _context3.sent;
           _iteratorNormalCompletion2 = true;
           _didIteratorError2 = false;
           _iteratorError2 = undefined;
-          _context3.prev = 9;
+          _context3.prev = 11;
 
           for (_iterator2 = inventario.productos[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
             iterator = _step2.value;
@@ -273,52 +275,53 @@ inventarioController.eliminarProductoInventario = function _callee3(req, res, ne
             }
           }
 
-          _context3.next = 17;
+          _context3.next = 19;
           break;
 
-        case 13:
-          _context3.prev = 13;
-          _context3.t0 = _context3["catch"](9);
+        case 15:
+          _context3.prev = 15;
+          _context3.t0 = _context3["catch"](11);
           _didIteratorError2 = true;
           _iteratorError2 = _context3.t0;
 
-        case 17:
-          _context3.prev = 17;
-          _context3.prev = 18;
+        case 19:
+          _context3.prev = 19;
+          _context3.prev = 20;
 
           if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
             _iterator2["return"]();
           }
 
-        case 20:
-          _context3.prev = 20;
+        case 22:
+          _context3.prev = 22;
 
           if (!_didIteratorError2) {
-            _context3.next = 23;
+            _context3.next = 25;
             break;
           }
 
           throw _iteratorError2;
 
-        case 23:
-          return _context3.finish(20);
-
-        case 24:
-          return _context3.finish(17);
-
         case 25:
+          return _context3.finish(22);
+
+        case 26:
+          return _context3.finish(19);
+
+        case 27:
           if (!(productoExiste === false)) {
-            _context3.next = 27;
+            _context3.next = 30;
             break;
           }
 
+          console.log('no esta en inventario');
           return _context3.abrupt("return", res.status(409).json({
             status: 'Error',
             mensaje: 'El producto no se encuentra en tu inventario'
           }));
 
-        case 27:
-          _context3.next = 29;
+        case 30:
+          _context3.next = 32;
           return regeneratorRuntime.awrap(inventarioModel.findOneAndUpdate({
             _id: inventario._id
           }, {
@@ -329,7 +332,7 @@ inventarioController.eliminarProductoInventario = function _callee3(req, res, ne
             }
           }));
 
-        case 29:
+        case 32:
           productosToEliminar = _context3.sent;
           return _context3.abrupt("return", res.json({
             productosToEliminar: productosToEliminar,
@@ -337,17 +340,17 @@ inventarioController.eliminarProductoInventario = function _callee3(req, res, ne
             message: 'Producto eliminado correctamente'
           }));
 
-        case 33:
-          _context3.prev = 33;
+        case 36:
+          _context3.prev = 36;
           _context3.t1 = _context3["catch"](0);
           next(_context3.t1);
 
-        case 36:
+        case 39:
         case "end":
           return _context3.stop();
       }
     }
-  }, null, null, [[0, 33], [9, 13, 17, 25], [18,, 20, 24]]);
+  }, null, null, [[0, 36], [11, 15, 19, 27], [20,, 22, 26]]);
 };
 
 inventarioController.restarCantidadProducto = function _callee4(req, res, next) {
@@ -466,7 +469,7 @@ inventarioController.restarCantidadProducto = function _callee4(req, res, next) 
           resultado = _context4.sent;
           res.status(200).json({
             status: 'Success',
-            mensaje: 'Se ha restado a la cantidad del producto en tu inventario',
+            message: 'Se ha restado a la cantidad del producto en tu inventario',
             resultado: resultado
           });
           _context4.next = 44;
@@ -650,7 +653,7 @@ inventarioController.aumentarExistencia = function _callee5(req, res, next) {
         case 63:
           return _context5.abrupt("return", res.status(200).json({
             status: 'Success',
-            mensaje: 'Inventario actualizado con exito'
+            message: 'Inventario actualizado con exito'
           }));
 
         case 64:

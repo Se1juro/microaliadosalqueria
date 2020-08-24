@@ -29,24 +29,42 @@ class BodyTableProducts extends Component {
     await this.setState({
       openModal: !this.state.openModal,
     });
-    const res = await inventoryServices.addedProductToInventory(
-      this.props.userId,
-      this.state.productSelected,
-      this.state.countProduct
-    );
+    let res;
+    let addingExistingProduct = false;
+    let codeProductSelected = this.state.productSelected.codigoReferencia;
+    this.props.productsToFilter.forEach((product) => {
+      if (product.id === codeProductSelected) {
+        addingExistingProduct = true;
+      }
+    });
+    console.log(addingExistingProduct);
+    if (addingExistingProduct) {
+      res = await inventoryServices.increaseStock(
+        this.props.inventoryId._id,
+        this.props.userId,
+        codeProductSelected,
+        this.state.countProduct
+      );
+    } else {
+      res = await inventoryServices.addedProductToInventory(
+        this.props.userId,
+        this.state.productSelected,
+        this.state.countProduct
+      );
+    }
     if (res.status === 200) {
       await Swal.fire({
         title: res.data.status,
         text: res.data.message,
         icon: 'success',
-        timer: 2000,
+        timer: 5000,
       }).then(() => this.openCountPronduct, this.props.updateData());
     } else {
       await Swal.fire({
         icon: 'error',
         title: 'Algo salio mal',
         text: 'No pudimos agregar tu producto',
-        timer: 2000,
+        timer: 5000,
       });
     }
   };

@@ -161,7 +161,19 @@ productsServices.createProduct = async (newProduct) => {
         }
       });
   } catch (error) {
-    console.log(JSON.stringify(error));
+    return error;
+  }
+};
+productsServices.getProductByCode = async (productId) => {
+  try {
+    const res = await axios.get(`http://localhost:4000/${productId}`, {
+      headers: {
+        Authorization: 'Bearer ' + state.token,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error;
   }
 };
 export { productsServices };
