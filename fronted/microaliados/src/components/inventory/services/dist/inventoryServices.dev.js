@@ -66,6 +66,7 @@ inventoryServices.addedProductToInventory = function _callee2(userId, product, c
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
+          _context2.prev = 0;
           newData = {
             codigoUsuario: userId,
             productos: {
@@ -74,21 +75,26 @@ inventoryServices.addedProductToInventory = function _callee2(userId, product, c
               cantidad: count
             }
           };
-          _context2.next = 3;
+          _context2.next = 4;
           return regeneratorRuntime.awrap(_axios["default"].post('http://localhost:4000/inventario/', newData, {
             headers: {
               Authorization: 'Bearer ' + state.token
             }
           }));
 
-        case 3:
+        case 4:
           res = _context2.sent;
           return _context2.abrupt("return", res);
 
-        case 5:
+        case 8:
+          _context2.prev = 8;
+          _context2.t0 = _context2["catch"](0);
+          return _context2.abrupt("return", _context2.t0);
+
+        case 11:
         case "end":
           return _context2.stop();
       }
     }
-  });
+  }, null, null, [[0, 8]]);
 };

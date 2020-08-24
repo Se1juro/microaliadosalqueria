@@ -5,6 +5,10 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import ProductsList from '../products/ProductsList';
 import Spinner from 'react-bootstrap/Spinner';
 import Modal from 'react-bootstrap/Modal';
+import { StatePagination } from '../customState/StatePagination';
+import Pagination from '../pagination/Pagination';
+import SelectPagination from '../pagination/SelectPagination';
+import ManageProduct from './ManageProduct';
 class Inventory extends Component {
   state = {
     codigoReferencia: '',
@@ -20,6 +24,7 @@ class Inventory extends Component {
     totalProducts: [],
     limitItem: 5,
     productsToFilter: [],
+    openEditProduct: false,
   };
 
   async componentDidMount() {
@@ -55,17 +60,15 @@ class Inventory extends Component {
     }
   };
 
-  generatePagination = () => {
-    let rows = [];
-    for (let i = 1; i <= this.state.totalPage; i++) {
-      rows.push(i);
-    }
-    let totalProducts = [];
-    for (let x = 1; x <= this.state.countSelect; x++) {
-      totalProducts.push(x);
-    }
-    this.setState({ totalProducts });
-    this.setState({ rows });
+  generatePagination = async () => {
+    const pagination = await StatePagination.generatePagination(
+      this.state.totalPage,
+      this.state.countSelect
+    );
+    this.setState({
+      rows: pagination.rows,
+      totalProducts: pagination.totalItems,
+    });
   };
 
   selectNumPage = async (numPage) => {
@@ -89,6 +92,9 @@ class Inventory extends Component {
       await this.setState({ currentPage: this.state.currentPage - 1 });
       await this.getInventory(this.state.currentPage, this.state.limitItem);
     }
+  };
+  openEditProduct = () => {
+    this.setState({ openEditProduct: !this.state.openEditProduct });
   };
 
   render() {
@@ -138,18 +144,12 @@ class Inventory extends Component {
               {!loadingData ? inventario[0].productos.length : 'Loading...'}
             </h6>
             <h6>Numero de items</h6>
-            <select
-              id="limitItem"
-              className="form-control col-md-3"
-              name="limitItem"
-              onChange={this.onInputChange}
-            >
-              {this.state.totalProducts.map((product) => (
-                <option key={product} value={product}>
-                  {product}
-                </option>
-              ))}
-            </select>
+            <SelectPagination
+              changeInput={this.onInputChange}
+              limitItem={this.state.limitItem}
+              totalDocs={this.state.totalProducts}
+            />
+
             <hr />
             <div className="card-text">
               {this.state.products.map((product) => (
@@ -168,6 +168,7 @@ class Inventory extends Component {
                       style={{
                         height: '30px',
                       }}
+                      onClick={this.openEditProduct}
                     >
                       {' '}
                       <FontAwesomeIcon
@@ -184,47 +185,13 @@ class Inventory extends Component {
                 </div>
               ))}
             </div>
-            <nav aria-label="Page navigation example">
-              <ul className="pagination">
-                {this.state.currentPage === 1 ? null : (
-                  <li className="page-item">
-                    <button
-                      className="page-link"
-                      aria-label="Previous"
-                      id="previous"
-                      onClick={() => this.movePages('prev')}
-                    >
-                      <span aria-hidden="true">&laquo;</span>
-                      <span className="sr-only">Previous</span>
-                    </button>
-                  </li>
-                )}
-
-                {rowsPagination.map((row) => (
-                  <li className="page-item" key={row}>
-                    <button
-                      className="page-link"
-                      onClick={() => this.selectNumPage(row)}
-                    >
-                      {row}
-                    </button>
-                  </li>
-                ))}
-                {this.state.currentPage === this.state.totalPage ? null : (
-                  <li className="page-item">
-                    <button
-                      className="page-link"
-                      aria-label="Next"
-                      id="next"
-                      onClick={() => this.movePages('next')}
-                    >
-                      <span aria-hidden="true">&raquo;</span>
-                      <span className="sr-only">Next</span>
-                    </button>
-                  </li>
-                )}
-              </ul>
-            </nav>
+            <Pagination
+              rows={rowsPagination}
+              currentPage={this.state.currentPage}
+              totalPage={this.state.totalPage}
+              movePages={this.movePages}
+              selectNumPage={this.selectNumPage}
+            />
           </div>
         </div>
         <div>
@@ -268,6 +235,11 @@ class Inventory extends Component {
                 )}
               </Modal.Body>
             </Modal>
+
+            <ManageProduct
+              open={this.state.openEditProduct}
+              close={this.openEditProduct}
+            />
           </div>
         </div>
       </div>

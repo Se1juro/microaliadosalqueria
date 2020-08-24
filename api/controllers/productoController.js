@@ -3,7 +3,9 @@ const productoController = {};
 
 productoController.getAllProducts = async (req, res, next) => {
   try {
-    const productos = await productoModel.find();
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const productos = await productoModel.paginate({}, { limit, page });
     return res.status(200).json(productos);
   } catch (error) {
     next(error);
@@ -11,7 +13,12 @@ productoController.getAllProducts = async (req, res, next) => {
 };
 productoController.getProductsActive = async (req, res, next) => {
   try {
-    const productos = await productoModel.find({ estado: true });
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const productos = await productoModel.paginate(
+      { estado: true },
+      { limit, page }
+    );
     return res.status(200).json(productos);
   } catch (error) {
     next(error);

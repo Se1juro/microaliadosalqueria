@@ -6,6 +6,9 @@ import BodyTableProducts from './BodyTableProducts';
 import AdvancedOptionsProducts from './AdvancedOptionsProducts';
 import jwt from 'jsonwebtoken';
 import { productsServices } from './services/productsServices';
+import { StatePagination } from '../customState/StatePagination';
+import Pagination from '../pagination/Pagination';
+import SelectPagination from '../pagination/SelectPagination';
 
 export default class ProductsList extends Component {
   state = {
@@ -17,11 +20,21 @@ export default class ProductsList extends Component {
     viewAllProducts: false,
     showSupport: true,
     managinginventory: false,
-    colums: [],
+    currentPage: 1,
+    totalPage: 2,
+    rows: [],
+    countSelect: 0,
+    totalDocs: [],
+    limitItem: 10,
   };
 
   async componentDidMount() {
+    if (this.props.support) {
+      await this.setState({ showSupport: false });
+      await this.setState({ managinginventory: true });
+    }
     await this.getProducts();
+
     const token = jwt.decode(this.state.token);
     if (token.rol === 'admin') {
       this.setState({ isAdmin: true });
@@ -29,56 +42,62 @@ export default class ProductsList extends Component {
     if (token.rol === 'microaliado') {
       this.setState({ isMicroAlly: true });
     }
-    if (this.props.support) {
-      this.setState({ showSupport: false });
-      this.setState({ managinginventory: true });
-    }
-    let productsInventory = this.props.products;
-    let productsAlqueria = this.state.productos;
-    if (this.state.managinginventory) {
-      for (let x = 0; x < productsInventory.length; x++) {
-        for (let i = 0; i < productsAlqueria.length; i++) {
-          if (
-            productsInventory[x].id === productsAlqueria[i].codigoReferencia
-          ) {
-            productsAlqueria.splice(i, 1);
-          }
-        }
-      }
-      this.setState({ productos: productsAlqueria });
-    }
-    this.addColumns();
   }
-
-  addColumns = async () => {
-    let colums = [
-      { dataField: 'codigoReferencia', text: 'Codigo Referencia' },
-      { dataField: 'descripcion', text: 'Descripcion' },
-      { dataField: 'aplicaIVA', text: 'IVA' },
-      { dataField: 'precioUnitario', text: 'Precio Unitario' },
-    ];
-    if (this.state.isAdmin) {
-      colums.push({ dataField: 'opciones', text: 'Opciones' });
-    }
-    if (this.state.isMicroAlly && this.state.managinginventory) {
-      colums.push({ dataField: 'opciones', text: 'Opciones' });
+  generatePagination = async () => {
+    const pagination = await StatePagination.generatePagination(
+      this.state.totalPage,
+      this.state.countSelect
+    );
+    this.setState({ rows: pagination.rows, totalDocs: pagination.totalItems });
+  };
+  movePages = async (instruction) => {
+    if (instruction === 'next') {
+      await this.setState({ currentPage: this.state.currentPage + 1 });
+      await this.getProducts(this.state.currentPage, this.state.limitItem);
+    } else {
+      await this.setState({ currentPage: this.state.currentPage - 1 });
+      await this.getProducts(this.state.currentPage, this.state.limitItem);
     }
   };
-
   changeValueOfProductList = async (param) => {
     await this.setState({ viewAllProducts: param });
     await this.getProducts();
   };
 
-  getProducts = async () => {
-    const data = await productsServices.getProducts(this.state.viewAllProducts);
-    this.setState({ productos: data.productos, loading: data.loading });
-    console.log(this.state.loading);
-    console.log(this.state.productos);
+  getProducts = async (currentPage, limitItem) => {
+    let data;
+    if (currentPage && limitItem) {
+      data = await productsServices.getProducts(
+        this.state.viewAllProducts,
+        currentPage,
+        limitItem
+      );
+    } else {
+      data = await productsServices.getProducts(this.state.viewAllProducts);
+    }
+    await this.setState({ countSelect: data.productos.totalDocs });
+    await this.setState({ totalPage: data.productos.totalPages });
+    await this.setState({ limitItem: data.productos.limit });
+    await this.setState({
+      productos: data.productos.docs,
+      loading: data.loading,
+    });
+    await this.generatePagination();
+  };
+  selectNumPage = async (numPage) => {
+    await this.setState({ currentPage: numPage });
+    await this.getProducts(numPage, this.state.limitItem);
+  };
+  onInputChange = async (e) => {
+    await this.setState({
+      [e.target.name]: e.target.value,
+    });
+    await this.getProducts(this.state.currentPage, this.state.limitItem);
   };
 
   render() {
     const loading = this.state.loading;
+    const rowsPagination = this.state.rows;
     return (
       <div className="row">
         <div
@@ -88,6 +107,12 @@ export default class ProductsList extends Component {
               : 'col-md-8 cold-md-offset-3'
           }
         >
+          <h6>Cantidad de productos</h6>
+          <SelectPagination
+            changeInput={this.onInputChange}
+            limitItem={this.state.limitItem}
+            totalDocs={this.state.totalDocs}
+          />
           {loading ? (
             <Spinner
               animation="border"
@@ -127,6 +152,21 @@ export default class ProductsList extends Component {
             ) : null}
           </div>
         ) : null}
+        <div
+          className={
+            this.props.support
+              ? this.props.support
+              : 'col-md-8 cold-md-offset-3'
+          }
+        >
+          <Pagination
+            rows={rowsPagination}
+            currentPage={this.state.currentPage}
+            totalPage={this.state.totalPage}
+            movePages={this.movePages}
+            selectNumPage={this.selectNumPage}
+          />
+        </div>
       </div>
     );
   }

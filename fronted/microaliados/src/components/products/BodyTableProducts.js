@@ -35,17 +35,17 @@ class BodyTableProducts extends Component {
       this.state.countProduct
     );
     if (res.status === 200) {
-      Swal.fire({
+      await Swal.fire({
         title: res.data.status,
         text: res.data.message,
         icon: 'success',
         timer: 2000,
       }).then(() => this.openCountPronduct, this.props.updateData());
     } else {
-      Swal.fire({
+      await Swal.fire({
         icon: 'error',
         title: 'Algo salio mal',
-        text: 'No pudimos eliminar el usuario',
+        text: 'No pudimos agregar tu producto',
         timer: 2000,
       });
     }
