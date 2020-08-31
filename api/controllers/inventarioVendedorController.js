@@ -277,4 +277,23 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
     next(error);
   }
 };
+inventarioVendedorController.getDistribution = async (req, res, next) => {
+  try {
+    const distribution = await distribucionModel.find({
+      codigoUsuario: req.params.id,
+    });
+    if (!distribution) {
+      return res.status(409).json({
+        status: 'Error',
+        message: 'No se encontro tu distribucion',
+      });
+    }
+    return res.status(200).json({
+      status: 'Success',
+      distribution,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = inventarioVendedorController;

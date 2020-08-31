@@ -106,16 +106,21 @@ inventarioController.crearInventario = function _callee2(req, res, next) {
           }));
 
         case 9:
-          _context2.next = 11;
+          if (!data.productos) {
+            _context2.next = 15;
+            break;
+          }
+
+          _context2.next = 12;
           return regeneratorRuntime.awrap(productoModel.findOne({
             codigoReferencia: data.productos.id
           }));
 
-        case 11:
+        case 12:
           productoExistente = _context2.sent;
 
           if (productoExistente) {
-            _context2.next = 14;
+            _context2.next = 15;
             break;
           }
 
@@ -124,36 +129,36 @@ inventarioController.crearInventario = function _callee2(req, res, next) {
             mensaje: 'No se encuentra un producto con este codigo de referencia'
           }));
 
-        case 14:
-          _context2.next = 16;
+        case 15:
+          _context2.next = 17;
           return regeneratorRuntime.awrap(inventarioModel.findOne({
             codigoUsuario: data.codigoUsuario
           }));
 
-        case 16:
+        case 17:
           inventarioExistente = _context2.sent;
 
           if (!inventarioExistente) {
-            _context2.next = 49;
+            _context2.next = 50;
             break;
           }
 
           _iteratorNormalCompletion = true;
           _didIteratorError = false;
           _iteratorError = undefined;
-          _context2.prev = 21;
+          _context2.prev = 22;
           _iterator = inventarioExistente.productos[Symbol.iterator]();
 
-        case 23:
+        case 24:
           if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-            _context2.next = 30;
+            _context2.next = 31;
             break;
           }
 
           key = _step.value;
 
           if (!(key.id === data.productos.id)) {
-            _context2.next = 27;
+            _context2.next = 28;
             break;
           }
 
@@ -162,47 +167,47 @@ inventarioController.crearInventario = function _callee2(req, res, next) {
             mensaje: 'Ya tienes un producto de la misma referencia en tu inventario'
           }));
 
-        case 27:
+        case 28:
           _iteratorNormalCompletion = true;
-          _context2.next = 23;
+          _context2.next = 24;
           break;
 
-        case 30:
-          _context2.next = 36;
+        case 31:
+          _context2.next = 37;
           break;
 
-        case 32:
-          _context2.prev = 32;
-          _context2.t0 = _context2["catch"](21);
+        case 33:
+          _context2.prev = 33;
+          _context2.t0 = _context2["catch"](22);
           _didIteratorError = true;
           _iteratorError = _context2.t0;
 
-        case 36:
-          _context2.prev = 36;
+        case 37:
           _context2.prev = 37;
+          _context2.prev = 38;
 
           if (!_iteratorNormalCompletion && _iterator["return"] != null) {
             _iterator["return"]();
           }
 
-        case 39:
-          _context2.prev = 39;
+        case 40:
+          _context2.prev = 40;
 
           if (!_didIteratorError) {
-            _context2.next = 42;
+            _context2.next = 43;
             break;
           }
 
           throw _iteratorError;
 
-        case 42:
-          return _context2.finish(39);
-
         case 43:
-          return _context2.finish(36);
+          return _context2.finish(40);
 
         case 44:
-          _context2.next = 46;
+          return _context2.finish(37);
+
+        case 45:
+          _context2.next = 47;
           return regeneratorRuntime.awrap(inventarioModel.findOneAndUpdate({
             codigoUsuario: data.codigoUsuario
           }, {
@@ -211,38 +216,38 @@ inventarioController.crearInventario = function _callee2(req, res, next) {
             }
           }));
 
-        case 46:
+        case 47:
           return _context2.abrupt("return", res.status(200).json({
             status: 'Success',
             message: 'Inventario actualizado'
           }));
 
-        case 49:
+        case 50:
           inventario = new inventarioModel(data);
-          _context2.next = 52;
+          _context2.next = 53;
           return regeneratorRuntime.awrap(inventario.save());
 
-        case 52:
+        case 53:
           res.status(200).json({
             status: 'Success',
             message: 'Inventario almacenado con exito'
           });
 
-        case 53:
-          _context2.next = 58;
+        case 54:
+          _context2.next = 59;
           break;
 
-        case 55:
-          _context2.prev = 55;
+        case 56:
+          _context2.prev = 56;
           _context2.t1 = _context2["catch"](0);
           next(_context2.t1);
 
-        case 58:
+        case 59:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 55], [21, 32, 36, 44], [37,, 39, 43]]);
+  }, null, null, [[0, 56], [22, 33, 37, 45], [38,, 40, 44]]);
 };
 
 inventarioController.eliminarProductoInventario = function _callee3(req, res, next) {

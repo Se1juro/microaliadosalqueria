@@ -308,7 +308,7 @@ productsServices.getProductByCode = function _callee6(productId) {
         case 0:
           _context6.prev = 0;
           _context6.next = 3;
-          return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:4000/".concat(productId), {
+          return regeneratorRuntime.awrap(_axios["default"].get("http://localhost:4000/productos/".concat(productId), {
             headers: {
               Authorization: 'Bearer ' + state.token
             }

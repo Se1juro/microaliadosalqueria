@@ -22,24 +22,25 @@ export default class SearchProductForm extends Component {
       this.props.getProductByCode();
     }
   };
-  searchUser = async (e) => {
+  searchProduct = async (e) => {
     e.preventDefault();
     if (this.state.codigo) {
-      const dataOfProduct = await productsServices.searchByCode(
+      const dataOfProduct = await productsServices.getProductByCode(
         this.state.codigo
       );
       const newProduct = [];
-      newProduct.push(dataOfProduct.resultado);
+      newProduct.push(dataOfProduct.data[0]);
       if (newProduct[0] === null || newProduct[0] === undefined) {
+        console.log(dataOfProduct);
         return await Swal.fire({
           icon: 'error',
           title: 'Algo salio mal',
-          text: 'No pudimos encontrar el usuario',
-          timer: 2000,
+          text: 'No pudimos encontrar el producto',
+          timer: 3000,
         });
       }
       this.setState({ products: newProduct });
-      if (this.state.searchingUserToList) {
+      if (this.state.searchingProductToList) {
         this.props.getProductByCode(newProduct);
       }
     }

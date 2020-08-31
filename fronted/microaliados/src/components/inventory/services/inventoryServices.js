@@ -10,50 +10,72 @@ inventoryServices.getInventory = async (
   numPage,
   limitItems
 ) => {
-  let res;
-  if (numPage && limitItems) {
-    res = await axios.get(
-      'http://localhost:4000/inventario/' +
-        codigoReferencia +
-        '?page=' +
-        numPage +
-        '&limit=' +
-        limitItems,
-      {
-        headers: {
-          Authorization: 'Bearer ' + state.token,
-        },
-      }
-    );
-  } else {
-    res = await axios.get(
-      'http://localhost:4000/inventario/' + codigoReferencia,
-      {
-        headers: {
-          Authorization: 'Bearer ' + state.token,
-        },
-      }
-    );
-  }
+  try {
+    let res;
+    if (numPage && limitItems) {
+      res = await axios
+        .get(
+          'http://localhost:4000/inventario/' +
+            codigoReferencia +
+            '?page=' +
+            numPage +
+            '&limit=' +
+            limitItems,
+          {
+            headers: {
+              Authorization: 'Bearer ' + state.token,
+            },
+          }
+        )
+        .catch((err) => {
+          return err.response;
+        });
+    } else {
+      res = await axios
+        .get('http://localhost:4000/inventario/' + codigoReferencia, {
+          headers: {
+            Authorization: 'Bearer ' + state.token,
+          },
+        })
+        .catch((err) => {
+          return err.response;
+        });
+    }
 
-  return res.data;
+    return res.data;
+  } catch (error) {
+    return error;
+  }
 };
 inventoryServices.addedProductToInventory = async (userId, product, count) => {
   try {
-    let stock = parseInt(count);
-    const newData = {
-      codigoUsuario: userId,
-      productos: {
-        nomProduct: product.descripcion,
-        id: product.codigoReferencia,
-        cantidad: stock,
-      },
-    };
-    const res = await axios.post('http://localhost:4000/inventario/', newData, {
-      headers: {
-        Authorization: 'Bearer ' + state.token,
-      },
-    });
+    let newData;
+    let stock;
+    if (product) {
+      stock = parseInt(count);
+      newData = {
+        codigoUsuario: userId,
+        productos: {
+          nomProduct: product.descripcion,
+          id: product.codigoReferencia,
+          cantidad: stock,
+        },
+      };
+    } else {
+      newData = {
+        codigoUsuario: userId,
+      };
+    }
+
+    const res = await axios
+      .post('http://localhost:4000/inventario/', newData, {
+        headers: {
+          Authorization: 'Bearer ' + state.token,
+        },
+      })
+      .catch((err) => {
+        return err.response;
+      });
 
     return res;
   } catch (error) {

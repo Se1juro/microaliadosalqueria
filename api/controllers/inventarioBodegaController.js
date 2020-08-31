@@ -61,15 +61,18 @@ inventarioController.crearInventario = async (req, res, next) => {
           'El usuario no tiene el rol requerido para asignarle un inventario',
       });
     }
-    const productoExistente = await productoModel.findOne({
-      codigoReferencia: data.productos.id,
-    });
-    if (!productoExistente) {
-      return res.status(409).json({
-        status: 'Error',
-        mensaje: 'No se encuentra un producto con este codigo de referencia',
+    if (data.productos) {
+      const productoExistente = await productoModel.findOne({
+        codigoReferencia: data.productos.id,
       });
+      if (!productoExistente) {
+        return res.status(409).json({
+          status: 'Error',
+          mensaje: 'No se encuentra un producto con este codigo de referencia',
+        });
+      }
     }
+
     const inventarioExistente = await inventarioModel.findOne({
       codigoUsuario: data.codigoUsuario,
     });

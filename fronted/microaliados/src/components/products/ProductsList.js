@@ -172,13 +172,15 @@ export default class ProductsList extends Component {
               : 'col-md-8 cold-md-offset-3'
           }
         >
-          <Pagination
-            rows={rowsPagination}
-            currentPage={this.state.currentPage}
-            totalPage={this.state.totalPage}
-            movePages={this.movePages}
-            selectNumPage={this.selectNumPage}
-          />
+          {this.state.productos.length <= 1 ? null : (
+            <Pagination
+              rows={rowsPagination}
+              currentPage={this.state.currentPage}
+              totalPage={this.state.totalPage}
+              movePages={this.movePages}
+              selectNumPage={this.selectNumPage}
+            />
+          )}
         </div>
       </div>
     );

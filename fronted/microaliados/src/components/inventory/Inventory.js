@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { inventoryServices } from './services/inventoryServices';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTruck } from '@fortawesome/free-solid-svg-icons';
 import ProductsList from '../products/ProductsList';
 import Spinner from 'react-bootstrap/Spinner';
 import Modal from 'react-bootstrap/Modal';
@@ -25,6 +25,8 @@ class Inventory extends Component {
     productsToFilter: [],
     openEditProduct: false,
     currentProduct: {},
+    userId: this.props.userId || this.props.match.params.id,
+    inDistribution: this.props.inDistribution || false,
   };
 
   async componentDidMount() {
@@ -39,25 +41,32 @@ class Inventory extends Component {
     }
   };
   getInventory = async (numPages, limitItems) => {
-    if (this.props.match.params.id) {
+    if (this.state.userId) {
       let res;
       if (numPages && limitItems) {
         res = await inventoryServices.getInventory(
-          this.props.match.params.id,
+          this.state.userId,
           numPages,
           limitItems
         );
       } else {
-        res = await inventoryServices.getInventory(this.props.match.params.id);
+        res = await inventoryServices.getInventory(this.state.userId);
       }
-      this.setState({
-        productsToFilter: res.inventario[0].productos,
-        products: res.productsToFront,
-        inventory: res.inventario,
-        loadingData: false,
-        totalPage: res.totalPages,
-        countSelect: res.totalDocuments,
-      });
+      if (res.mensaje === 'No existe el inventario') {
+        await inventoryServices.addedProductToInventory(this.state.userId);
+
+        await this.getInventory();
+      } else {
+        this.setState({
+          productsToFilter: res.inventario[0].productos,
+          products: res.productsToFront,
+          inventory: res.inventario,
+          loadingData: false,
+          totalPage: res.totalPages,
+          countSelect: res.totalDocuments,
+        });
+      }
+
       this.generatePagination();
     }
   };
@@ -102,13 +111,22 @@ class Inventory extends Component {
     });
   };
 
+  moveToDistribution = async (product) => {
+    await this.props.moveToDistribution(product, this.state.inventory[0]._id);
+  };
+
   render() {
     const inventario = this.state.inventory;
     const loadingData = this.state.loadingData;
     const rowsPagination = this.state.rows;
     return (
       <div className="row">
-        <div className="card col-md-6" style={{ width: this.fixCardWidth }}>
+        <div
+          className={
+            this.state.inDistribution ? 'card col-md-12' : 'card col-md-6'
+          }
+          style={{ width: this.fixCardWidth }}
+        >
           <div className="card-body">
             <div
               className="card-title"
@@ -168,23 +186,43 @@ class Inventory extends Component {
                     <b style={{ margin: '10px' }}> Cant: </b> {product.cantidad}{' '}
                   </div>
                   <div>
-                    <button
-                      className="btn btn-primary"
-                      style={{
-                        height: '30px',
-                      }}
-                      onClick={() => this.openEditProduct(product)}
-                    >
-                      {' '}
-                      <FontAwesomeIcon
-                        icon={faEdit}
+                    {this.state.inDistribution ? (
+                      <button
+                        className="btn btn-primary"
                         style={{
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignContent: 'center',
+                          height: '30px',
                         }}
-                      />
-                    </button>
+                        onClick={() => this.moveToDistribution(product)}
+                      >
+                        {' '}
+                        <FontAwesomeIcon
+                          icon={faTruck}
+                          style={{
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignContent: 'center',
+                          }}
+                        />
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-primary"
+                        style={{
+                          height: '30px',
+                        }}
+                        onClick={() => this.openEditProduct(product)}
+                      >
+                        {' '}
+                        <FontAwesomeIcon
+                          icon={faEdit}
+                          style={{
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignContent: 'center',
+                          }}
+                        />
+                      </button>
+                    )}
                   </div>
                   <hr></hr>
                 </div>
@@ -209,46 +247,49 @@ class Inventory extends Component {
               alignItems: 'center',
             }}
           >
-            <button
-              type="button"
-              className="btn btn-info"
-              onClick={this.openWindow}
-            >
-              Ver productos
-            </button>
-            <Modal
-              size="lg"
-              show={this.state.openWindowProducts}
-              onHide={this.openWindow}
-              aria-labelledby="example-modal-sizes-title-lg"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title id="example-modal-sizes-title-lg">
-                  Productos
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                {this.state.loadingData ? (
-                  <Spinner animation="border" variant="primary" />
-                ) : (
-                  <ProductsList
-                    support="col-md-12 cold-md-offset-3 modal-lg"
-                    products={this.state.productsToFilter}
-                    userId={this.props.match.params.id}
-                    updateData={this.getInventory}
-                    inventoryId={inventario[0]}
-                  />
-                )}
-              </Modal.Body>
-            </Modal>
-
+            {this.state.inDistribution ? null : (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-info"
+                  onClick={this.openWindow}
+                >
+                  Ver productos
+                </button>
+                <Modal
+                  size="lg"
+                  show={this.state.openWindowProducts}
+                  onHide={this.openWindow}
+                  aria-labelledby="example-modal-sizes-title-lg"
+                >
+                  <Modal.Header closeButton>
+                    <Modal.Title id="example-modal-sizes-title-lg">
+                      Productos
+                    </Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    {this.state.loadingData ? (
+                      <Spinner animation="border" variant="primary" />
+                    ) : (
+                      <ProductsList
+                        support="col-md-12 cold-md-offset-3 modal-lg"
+                        products={this.state.productsToFilter}
+                        userId={this.state.userId}
+                        updateData={this.getInventory}
+                        inventoryId={inventario[0]}
+                      />
+                    )}
+                  </Modal.Body>
+                </Modal>
+              </>
+            )}
             <ManageProduct
               open={this.state.openEditProduct}
               close={this.openEditProduct}
               product={this.state.currentProduct}
               inventarioId={inventario[0]}
               getData={this.getInventory}
-              userId={this.props.match.params.id}
+              userId={this.state.userId}
             />
           </div>
         </div>

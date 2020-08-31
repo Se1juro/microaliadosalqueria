@@ -9,5 +9,5 @@ router.put(
   auth.verificarToken,
   produccionController.finalizarDistribucion
 );
-
+router.get('/:id', auth.verificarToken, produccionController.getDistribution);
 module.exports = router;

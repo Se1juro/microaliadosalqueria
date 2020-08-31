@@ -40,6 +40,7 @@ export default class ManageProduct extends Component {
       this.state.cantidad || this.props.product.cantidad
     );
     await this.succesCall(res);
+    this.setState({ cantidad: undefined });
   };
   subtractStock = async () => {
     const res = await inventoryServices.subtractStock(
@@ -48,6 +49,7 @@ export default class ManageProduct extends Component {
       this.state.cantidad || this.props.product.cantidad
     );
     await this.succesCall(res);
+    this.setState({ cantidad: undefined });
   };
 
   succesCall = async (res) => {

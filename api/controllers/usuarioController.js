@@ -6,7 +6,7 @@ const usuarioController = {};
 const BCRYPT_SALT_ROUNDS = 12;
 usuarioController.registrarUsusario = async (req, res, next) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const data = {
       codigo: req.body.codigo,
       password: req.body.password,
@@ -16,10 +16,12 @@ usuarioController.registrarUsusario = async (req, res, next) => {
       municipio: req.body.municipio,
       telefono: req.body.telefono,
     };
-    const usuarioExistente = await usuarioModel.findOne({ codigo: data.codigo });
+    const usuarioExistente = await usuarioModel.findOne({
+      codigo: data.codigo,
+    });
     if (usuarioExistente) {
-      console.log(usuarioExistente)
-      console.log("Entro")
+      console.log(usuarioExistente);
+      console.log('Entro');
       return res.status(409).json({
         status: 'Error',
         mensaje: 'Ya existe un usuario con este codigo.',
@@ -27,8 +29,8 @@ usuarioController.registrarUsusario = async (req, res, next) => {
     }
     const nuevoUsuario = new usuarioModel(data);
     nuevoUsuario.password = await bcrypt.hash(
-        nuevoUsuario.password,
-        BCRYPT_SALT_ROUNDS
+      nuevoUsuario.password,
+      BCRYPT_SALT_ROUNDS
     );
     await nuevoUsuario.save();
     const datosToLocalStorage = {
@@ -56,13 +58,13 @@ usuarioController.iniciarSesion = async (req, res, next) => {
         status: 'Error',
         mensaje: 'El usuario no existe, comunicate con el administrador',
       });
-    } if (!usuario.estado){
+    }
+    if (!usuario.estado) {
       return res.status(409).json({
         status: 'Error',
         mensaje: 'Usuario inactivo, comunicate con el administrador',
       });
-    }
-    else {
+    } else {
       const matchPassword = await bcrypt.compare(
         req.body.password,
         usuario.password
@@ -111,7 +113,7 @@ usuarioController.consultarUsuarios = async (req, res, next) => {
 };
 usuarioController.usersActives = async (req, res, next) => {
   try {
-    const resultado = await usuarioModel.find({estado:true});
+    const resultado = await usuarioModel.find({ estado: true });
     return res.status(200).json({
       resultado,
     });
@@ -190,51 +192,35 @@ usuarioController.asignarMicroaliadoToVendedor = async (req, res, next) => {
     next(error);
   }
 };
-usuarioController.makeAdmin=async(req,res,next)=>{
-  try {
-    const codigoUsuario = req.params.id;
-    const userExists = await usuarioModel.findOne({codigo:codigoUsuario});
-    if (userExists){
-    await usuarioModel.findOneAndUpdate({codigo:codigoUsuario}, {rol: 'admin'},{new:true})
-      return res.status(200).json({
-        status:'Success',
-        mensaje:'Se ha modificado el usuario con exito'
-      })
-    }else{
-      res.status(409).json({
-        status:'Error',
-        mensaje:'El usuario que intenta modificar no existe'
-      })
-    }
-  }catch (err){
-    next(err)
-  }
-}
-usuarioController.deleteUser=async(req,res,next)=>{
+usuarioController.deleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
     const userExists = await usuarioModel.findByIdAndUpdate(id);
 
-    if (userExists){
-      if (!userExists.estado){
+    if (userExists) {
+      if (!userExists.estado) {
         return res.status(409).json({
-          status:'Error',
-          mensaje:'El usuario ya se encuentra inactivo'
-        })
+          status: 'Error',
+          mensaje: 'El usuario ya se encuentra inactivo',
+        });
       }
-      await usuarioModel.findByIdAndUpdate(id, {estado: false},{new:true})
+      await usuarioModel.findByIdAndUpdate(
+        id,
+        { estado: false },
+        { new: true }
+      );
       return res.status(200).json({
-        status:'Success',
-        mensaje:'Se ha modificado el usuario con exito'
-      })
-    }else{
+        status: 'Success',
+        mensaje: 'Se ha modificado el usuario con exito',
+      });
+    } else {
       return res.status(409).json({
-        status:'Error',
-        mensaje:'El usuario que intenta modificar no existe'
-      })
+        status: 'Error',
+        mensaje: 'El usuario que intenta modificar no existe',
+      });
     }
-  }catch (err){
-    next(err)
+  } catch (err) {
+    next(err);
   }
-}
+};
 module.exports = usuarioController;
