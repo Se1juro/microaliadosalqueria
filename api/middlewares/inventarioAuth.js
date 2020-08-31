@@ -1,6 +1,7 @@
 const inventarioAuth = {};
 const jwt = require('jsonwebtoken');
 const inventarioModel = require('../models/inventarioModel');
+const usuarioModel = require('../models/usuarioModel');
 const secretKey = process.env.SECRETKEY;
 inventarioAuth.canManageInventory = async (req, res, next) => {
   try {
@@ -31,20 +32,27 @@ inventarioAuth.canViewInventory = async (req, res, next) => {
       const inventario = await inventarioModel.findOne({
         codigoUsuario: codigoUsuario,
       });
+      const seller = await usuarioModel.findOne({
+        codigoMicroaliadoEncargado: codigoUsuario,
+      });
+      if (seller) {
+        return next();
+      }
       if (!inventario) {
+        console.log('Aqui no hay');
         return res.status(409).json({
           status: 'Error',
           mensaje: 'No existe el inventario',
         });
-      } else {
-        if (inventario.codigoUsuario !== decoded.codigoReferencia) {
-          console.log('No puedo acceder al inventario');
-          return res.status(401).json({
-            status: 'Error',
-            mensaje: 'No puedes acceder a este inventario',
-          });
-        }
       }
+      if (inventario.codigoUsuario !== decoded.codigoReferencia) {
+        console.log('No coincido');
+        return res.status(401).json({
+          status: 'Error',
+          mensaje: 'No puedes acceder a este inventario',
+        });
+      }
+
       next();
     });
   } catch (error) {

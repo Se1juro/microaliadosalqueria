@@ -1,12 +1,11 @@
-import Swal from "sweetalert2";
-import axios from "axios";
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
-const userService = {}
+const userService = {};
 const state = {
-  token: localStorage.getItem("token")
-}
+  token: localStorage.getItem('token'),
+};
 userService.deleteUser = async (id, fn) => {
-
   Swal.fire({
     title: '¿Estas seguro de eliminar este producto?',
     text: 'Esta accion puede no ser irreversible',
@@ -18,24 +17,28 @@ userService.deleteUser = async (id, fn) => {
   }).then(async (result) => {
     if (result.value) {
       try {
-        const res = await axios.put('http://localhost:4000/usuarios/delete/' + id, "", {
-          headers: {
-            Authorization: 'Bearer ' + state.token,
-          },
-        });
+        const res = await axios.put(
+          'http://localhost:4000/usuarios/delete/' + id,
+          '',
+          {
+            headers: {
+              Authorization: 'Bearer ' + state.token,
+            },
+          }
+        );
         if (res.status === 200) {
           await Swal.fire({
             title: 'Eliminado',
             text: 'El usuario ha sido eliminado',
             icon: 'success',
-            timer: 2000
+            timer: 2000,
           }).then(fn());
         } else {
           await Swal.fire({
             icon: 'error',
             title: 'Algo salio mal',
             text: 'No pudimos eliminar el usuario',
-            timer: 2000
+            timer: 2000,
           });
         }
       } catch (error) {
@@ -43,7 +46,7 @@ userService.deleteUser = async (id, fn) => {
           icon: 'error',
           title: 'Algo salio mal',
           text: 'No pudimos eliminar el usuario',
-          timer: 2000
+          timer: 2000,
         });
       }
     }
@@ -52,43 +55,47 @@ userService.deleteUser = async (id, fn) => {
 userService.getUsers = async (viewAllUsers) => {
   let res;
   if (!viewAllUsers) {
-    res = await axios.get("http://localhost:4000/usuarios/disponibles", {
+    res = await axios.get('http://localhost:4000/usuarios/disponibles', {
       headers: {
-        Authorization: 'Bearer ' + state.token
-      }
-    })
+        Authorization: 'Bearer ' + state.token,
+      },
+    });
   } else {
-    res = await axios.get("http://localhost:4000/usuarios", {
+    res = await axios.get('http://localhost:4000/usuarios', {
       headers: {
-        Authorization: 'Bearer ' + state.token
-      }
-    })
+        Authorization: 'Bearer ' + state.token,
+      },
+    });
   }
-  return ({usuarios: res.data, loading: false})
-}
+  return { usuarios: res.data, loading: false };
+};
 userService.searchByCode = async (code) => {
   if (!code) {
     await Swal.fire({
       icon: 'error',
       title: 'Algo salio mal',
       text: 'No pudimos encontrar el usuario',
-      timer: 2000
+      timer: 2000,
     });
   } else {
     try {
-      const res = await axios.get("http://localhost:4000/usuarios/" + code, {
-        headers: {
-          Authorization: 'Berer ' + state.token
-        }
-      })
+      const res = await axios
+        .get('http://localhost:4000/usuarios/' + code, {
+          headers: {
+            Authorization: 'Berer ' + state.token,
+          },
+        })
+        .catch((err) => {
+          console.log(err.response);
+        });
       if (res.status === 200) {
-        return res.data
+        return res.data;
       } else {
         await Swal.fire({
           icon: 'error',
           title: 'Algo salio mal',
           text: 'No pudimos eliminar el usuario',
-          timer: 2000
+          timer: 2000,
         });
       }
     } catch (e) {
@@ -96,32 +103,36 @@ userService.searchByCode = async (code) => {
         icon: 'error',
         title: 'Algo salio mal',
         text: 'No pudimos encontrar el usuario',
-        timer: 2000
+        timer: 2000,
       });
     }
   }
-}
+};
 userService.makeMicroaliado = async (code, fn) => {
   if (!code || code === '') {
     await Swal.fire({
       icon: 'error',
       title: 'Algo salio mal',
       text: 'No ejecutar la tarea, comunicate con el administrador',
-      timer: 2000
+      timer: 2000,
     });
   } else {
     try {
-      const res = await axios.post("http://localhost:4000/usuarios/convert/" + code, null, {
-        headers: {
-          Authorization: 'Bearer ' + state.token
+      const res = await axios.post(
+        'http://localhost:4000/usuarios/convert/' + code,
+        null,
+        {
+          headers: {
+            Authorization: 'Bearer ' + state.token,
+          },
         }
-      })
+      );
       if (res.status === 200) {
         await Swal.fire({
           title: 'Exitoso',
           text: 'Funcion ejecutada con exito',
           icon: 'success',
-          timer: 2000
+          timer: 2000,
         }).then(fn());
       }
     } catch (e) {
@@ -129,34 +140,38 @@ userService.makeMicroaliado = async (code, fn) => {
         icon: 'error',
         title: 'Algo salio mal',
         text: 'No ejecutar la tarea, comunicate con el administrador',
-        timer: 2000
+        timer: 2000,
       });
     }
   }
-}
-userService.asignMicroToSeller = async (codeSeller, codeMicro,fn) => {
+};
+userService.asignMicroToSeller = async (codeSeller, codeMicro, fn) => {
   try {
     const microally = {
-      codigo: codeMicro
-    }
-    const res = await axios.post("http://localhost:4000/usuarios/asignmicro/" + codeSeller, microally, {
-      headers: {
-        Authorization: 'Bearer ' + state.token
+      codigo: codeMicro,
+    };
+    const res = await axios.post(
+      'http://localhost:4000/usuarios/asignmicro/' + codeSeller,
+      microally,
+      {
+        headers: {
+          Authorization: 'Bearer ' + state.token,
+        },
       }
-    });
+    );
     if (res.status === 200) {
       await Swal.fire({
         title: 'Exitoso',
         text: 'Funcion ejecutada con exito',
         icon: 'success',
-        timer: 3000
+        timer: 3000,
       }).then(fn());
     } else {
       await Swal.fire({
         icon: 'error',
         title: 'Algo salio mal',
         text: 'No se ejecuto la tarea, comunicate con el administrador',
-        timer: 3000
+        timer: 3000,
       });
     }
   } catch (e) {
@@ -164,9 +179,9 @@ userService.asignMicroToSeller = async (codeSeller, codeMicro,fn) => {
       icon: 'error',
       title: 'Algo salio mal',
       text: 'No se ejecuto la tarea, comunicate con el administrador',
-      timer: 3000
+      timer: 3000,
     });
   }
-}
+};
 
-export {userService};
+export { userService };

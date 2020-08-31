@@ -17,7 +17,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
     if (!inventarioOfMicroaliado) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'El inventario no existe',
+        message: 'El inventario no existe',
       });
     }
     for (const iterator of inventarioOfMicroaliado.productos) {
@@ -25,7 +25,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
         if (iterator.cantidad < data.productos.cantidad) {
           return res.status(409).json({
             status: 'Error',
-            mensaje:
+            message:
               'No puedes mandar esta cantidad a produccion, es mayor a la que hay en tu inventario',
           });
         }
@@ -35,7 +35,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
     if (!usuario) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'El usuario no existe',
+        message: 'El usuario no existe',
       });
     }
     const productoExistente = await inventarioModel.findOne({
@@ -44,7 +44,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
     if (!productoExistente) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'El producto no esta en tu inventario',
+        message: 'El producto no esta en tu inventario',
       });
     }
     const usuarios = await usuarioModel.find({
@@ -60,14 +60,14 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
       } else if (!canMoveToDistribucion) {
         return res.status(409).json({
           status: 'Error',
-          mensaje: 'Este vendedor no lo encontramos asociado a su inventario',
+          message: 'Este vendedor no lo encontramos asociado a su inventario',
         });
       }
     }
     if (!inventarioOfMicroaliado) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'No existe inventario para empezar la distribucion',
+        message: 'No existe inventario para empezar la distribucion',
       });
     } else if (canMoveToDistribucion == true) {
       let valorObjeto;
@@ -94,7 +94,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
         if (cantidadInventario === undefined || cantidadInventario === 0) {
           return res.status(409).json({
             status: 'Error',
-            mensaje:
+            message:
               'Al parecer el producto no esta en el inventario o no tiene cantidades disponibles',
           });
         }
@@ -132,7 +132,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
 
           return res.status(200).json({
             status: 'Success',
-            mensaje: 'Distribucion actualizada',
+            message: 'Distribucion actualizada',
           });
         } else {
           await distribucionModel.findOneAndUpdate(
@@ -154,7 +154,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
           );
           return res.status(200).json({
             status: 'Success',
-            mensaje: 'Distribucion actualizada',
+            message: 'Distribucion actualizada',
           });
         }
       } else {
@@ -169,7 +169,7 @@ inventarioVendedorController.moveToDistribution = async (req, res, next) => {
         );
         return res.status(200).json({
           status: 'Success',
-          mensaje: 'Guardado con exito',
+          message: 'Guardado con exito',
         });
       }
     }
@@ -188,7 +188,7 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
     if (!inventario) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'No se encontro un inventario asociado a este codigo',
+        message: 'No se encontro un inventario asociado a este codigo',
       });
     }
     const distribucionActual = await distribucionModel.findOne({
@@ -197,7 +197,7 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
     if (!distribucionActual) {
       return res.status(409).json({
         status: 'Error',
-        mensaje: 'No se encontro una distribucion activa',
+        message: 'No se encontro una distribucion activa',
       });
     }
     for (const key of data.productos) {
@@ -207,7 +207,7 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
             if (key.cantidad > iterator.cantidad) {
               return res.status(409).json({
                 status: 'Error',
-                mensaje:
+                message:
                   'No puedes devolver mas de los productos que tienes en distribucion',
               });
             }
@@ -258,19 +258,19 @@ inventarioVendedorController.finalizarDistribucion = async (req, res, next) => {
         }
         return res.status(200).json({
           status: 'Success',
-          mensaje: 'Distribucion finalizada',
+          message: 'Distribucion finalizada',
         });
       } catch (err) {
         console.log(err);
         return res.status(409).json({
           status: 'Error',
-          mensaje: 'Hubo un problema con los productos que intentas devolver',
+          message: 'Hubo un problema con los productos que intentas devolver',
         });
       }
     }
     return res.status(409).json({
       status: 'Error',
-      mensaje:
+      message:
         'Hubo un problema con los productos en distribucion, comunicate con el administrador',
     });
   } catch (error) {

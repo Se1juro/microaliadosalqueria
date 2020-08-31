@@ -38,7 +38,42 @@ distributionService.moveToDistribution = async (
       },
       codigoInventario: idInventario,
     };
-    console.log(data);
+    const res = Axios.post('http://localhost:4000/distribucion/', data, {
+      headers: { Authorization: 'Bearer ' + state.token },
+    }).catch((err) => {
+      return err.response;
+    });
+    return res;
+  } catch (error) {
+    return error;
+  }
+};
+distributionService.finishDelivery = async (
+  idUser,
+  product,
+  idInventario,
+  count
+) => {
+  try {
+    let cantidad = parseInt(count);
+    const data = {
+      codigoUsuario: idUser,
+      codigoInventario: idInventario,
+      productos: [
+        {
+          id: product.id,
+          cantidad: cantidad,
+        },
+      ],
+    };
+    const res = Axios.put('http://localhost:4000/distribucion/', data, {
+      headers: {
+        Authorization: 'Bearer ' + state.token,
+      },
+    }).catch((err) => {
+      return err.response;
+    });
+    return res;
   } catch (error) {
     return error;
   }

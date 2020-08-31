@@ -9,6 +9,8 @@ import { StatePagination } from '../customState/StatePagination';
 import Pagination from '../pagination/Pagination';
 import SelectPagination from '../pagination/SelectPagination';
 import ManageProduct from './ManageProduct';
+import jwt from 'jsonwebtoken';
+import { userService } from '../users/services/userServices';
 class Inventory extends Component {
   state = {
     products: [],
@@ -27,11 +29,28 @@ class Inventory extends Component {
     currentProduct: {},
     userId: this.props.userId || this.props.match.params.id,
     inDistribution: this.props.inDistribution || false,
+    token: localStorage.getItem('token'),
   };
 
   async componentDidMount() {
+    const token = jwt.decode(this.state.token);
+    const rol = token.rol;
+    if (rol === 'vendedor') {
+      const seller = await userService.searchByCode(token.codigoReferencia);
+      await this.setState({
+        userId: seller.resultado.codigoMicroaliadoEncargado,
+      });
+    }
     await this.getInventory();
     this.fixCardWidth();
+    if (this.props.loadInventoryId) {
+      await this.props.loadInventoryId(this.state.inventory[0]._id);
+    }
+  }
+  async componentDidUpdate(prevProps) {
+    if (prevProps.reloadData !== this.props.reloadData) {
+      await this.getInventory();
+    }
   }
   fixCardWidth = () => {
     if (this.state.width < 500) {
@@ -43,6 +62,7 @@ class Inventory extends Component {
   getInventory = async (numPages, limitItems) => {
     if (this.state.userId) {
       let res;
+
       if (numPages && limitItems) {
         res = await inventoryServices.getInventory(
           this.state.userId,
@@ -52,20 +72,26 @@ class Inventory extends Component {
       } else {
         res = await inventoryServices.getInventory(this.state.userId);
       }
-      if (res.mensaje === 'No existe el inventario') {
-        await inventoryServices.addedProductToInventory(this.state.userId);
-
-        await this.getInventory();
-      } else {
-        this.setState({
-          productsToFilter: res.inventario[0].productos,
-          products: res.productsToFront,
-          inventory: res.inventario,
-          loadingData: false,
-          totalPage: res.totalPages,
-          countSelect: res.totalDocuments,
-        });
+      const token = jwt.decode(this.state.token);
+      const rol = token.rol;
+      if (rol === 'microaliado') {
+        if (res.mensaje === 'No existe el inventario') {
+          const res = await inventoryServices.addedProductToInventory(
+            this.state.userId
+          );
+          if (res.status === 200) {
+            await this.getInventory();
+          }
+        }
       }
+      this.setState({
+        productsToFilter: res.inventario[0].productos || [],
+        products: res.productsToFront,
+        inventory: res.inventario,
+        loadingData: false,
+        totalPage: res.totalPages,
+        countSelect: res.totalDocuments,
+      });
 
       this.generatePagination();
     }

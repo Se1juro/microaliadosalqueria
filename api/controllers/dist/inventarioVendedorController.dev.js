@@ -38,7 +38,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
 
           return _context.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'El inventario no existe'
+            message: 'El inventario no existe'
           }));
 
         case 8:
@@ -68,7 +68,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
 
           return _context.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'No puedes mandar esta cantidad a produccion, es mayor a la que hay en tu inventario'
+            message: 'No puedes mandar esta cantidad a produccion, es mayor a la que hay en tu inventario'
           }));
 
         case 18:
@@ -126,7 +126,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
 
           return _context.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'El usuario no existe'
+            message: 'El usuario no existe'
           }));
 
         case 40:
@@ -145,7 +145,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
 
           return _context.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'El producto no esta en tu inventario'
+            message: 'El producto no esta en tu inventario'
           }));
 
         case 45:
@@ -187,7 +187,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
 
           return _context.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'Este vendedor no lo encontramos asociado a su inventario'
+            message: 'Este vendedor no lo encontramos asociado a su inventario'
           }));
 
         case 61:
@@ -237,7 +237,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
 
           return _context.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'No existe inventario para empezar la distribucion'
+            message: 'No existe inventario para empezar la distribucion'
           }));
 
         case 82:
@@ -366,7 +366,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
 
           return _context.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'Al parecer el producto no esta en el inventario o no tiene cantidades disponibles'
+            message: 'Al parecer el producto no esta en el inventario o no tiene cantidades disponibles'
           }));
 
         case 130:
@@ -493,7 +493,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
         case 174:
           return _context.abrupt("return", res.status(200).json({
             status: 'Success',
-            mensaje: 'Distribucion actualizada'
+            message: 'Distribucion actualizada'
           }));
 
         case 177:
@@ -520,7 +520,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
         case 181:
           return _context.abrupt("return", res.status(200).json({
             status: 'Success',
-            mensaje: 'Distribucion actualizada'
+            message: 'Distribucion actualizada'
           }));
 
         case 182:
@@ -546,7 +546,7 @@ inventarioVendedorController.moveToDistribution = function _callee(req, res, nex
         case 189:
           return _context.abrupt("return", res.status(200).json({
             status: 'Success',
-            mensaje: 'Guardado con exito'
+            message: 'Guardado con exito'
           }));
 
         case 190:
@@ -592,7 +592,7 @@ inventarioVendedorController.finalizarDistribucion = function _callee2(req, res,
 
           return _context2.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'No se encontro un inventario asociado a este codigo'
+            message: 'No se encontro un inventario asociado a este codigo'
           }));
 
         case 7:
@@ -611,7 +611,7 @@ inventarioVendedorController.finalizarDistribucion = function _callee2(req, res,
 
           return _context2.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'No se encontro una distribucion activa'
+            message: 'No se encontro una distribucion activa'
           }));
 
         case 12:
@@ -655,7 +655,7 @@ inventarioVendedorController.finalizarDistribucion = function _callee2(req, res,
 
           return _context2.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'No puedes devolver mas de los productos que tienes en distribucion'
+            message: 'No puedes devolver mas de los productos que tienes en distribucion'
           }));
 
         case 30:
@@ -877,7 +877,7 @@ inventarioVendedorController.finalizarDistribucion = function _callee2(req, res,
         case 112:
           return _context2.abrupt("return", res.status(200).json({
             status: 'Success',
-            mensaje: 'Distribucion finalizada'
+            message: 'Distribucion finalizada'
           }));
 
         case 115:
@@ -886,7 +886,7 @@ inventarioVendedorController.finalizarDistribucion = function _callee2(req, res,
           console.log(_context2.t3);
           return _context2.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'Hubo un problema con los productos que intentas devolver'
+            message: 'Hubo un problema con los productos que intentas devolver'
           }));
 
         case 119:
@@ -931,7 +931,7 @@ inventarioVendedorController.finalizarDistribucion = function _callee2(req, res,
         case 136:
           return _context2.abrupt("return", res.status(409).json({
             status: 'Error',
-            mensaje: 'Hubo un problema con los productos en distribucion, comunicate con el administrador'
+            message: 'Hubo un problema con los productos en distribucion, comunicate con el administrador'
           }));
 
         case 139:

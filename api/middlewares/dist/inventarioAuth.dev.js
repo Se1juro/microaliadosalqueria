@@ -6,6 +6,8 @@ var jwt = require('jsonwebtoken');
 
 var inventarioModel = require('../models/inventarioModel');
 
+var usuarioModel = require('../models/usuarioModel');
+
 var secretKey = process.env.SECRETKEY;
 
 inventarioAuth.canManageInventory = function _callee2(req, res, next) {
@@ -81,7 +83,7 @@ inventarioAuth.canViewInventory = function _callee4(req, res, next) {
           token = req.headers.authorization.split(' ')[1];
           _context4.next = 4;
           return regeneratorRuntime.awrap(jwt.verify(token, secretKey, function _callee3(err, decoded) {
-            var codigoUsuario, inventario;
+            var codigoUsuario, inventario, seller;
             return regeneratorRuntime.async(function _callee3$(_context3) {
               while (1) {
                 switch (_context3.prev = _context3.next) {
@@ -94,33 +96,49 @@ inventarioAuth.canViewInventory = function _callee4(req, res, next) {
 
                   case 3:
                     inventario = _context3.sent;
+                    _context3.next = 6;
+                    return regeneratorRuntime.awrap(usuarioModel.findOne({
+                      codigoMicroaliadoEncargado: codigoUsuario
+                    }));
 
-                    if (inventario) {
-                      _context3.next = 8;
+                  case 6:
+                    seller = _context3.sent;
+
+                    if (!seller) {
+                      _context3.next = 9;
                       break;
                     }
 
+                    return _context3.abrupt("return", next());
+
+                  case 9:
+                    if (inventario) {
+                      _context3.next = 12;
+                      break;
+                    }
+
+                    console.log('Aqui no hay');
                     return _context3.abrupt("return", res.status(409).json({
                       status: 'Error',
                       mensaje: 'No existe el inventario'
                     }));
 
-                  case 8:
+                  case 12:
                     if (!(inventario.codigoUsuario !== decoded.codigoReferencia)) {
-                      _context3.next = 11;
+                      _context3.next = 15;
                       break;
                     }
 
-                    console.log('No puedo acceder al inventario');
+                    console.log('No coincido');
                     return _context3.abrupt("return", res.status(401).json({
                       status: 'Error',
                       mensaje: 'No puedes acceder a este inventario'
                     }));
 
-                  case 11:
+                  case 15:
                     next();
 
-                  case 12:
+                  case 16:
                   case "end":
                     return _context3.stop();
                 }

@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-bootstrap';
 
-export default class ModalCount extends Component {
+export default class ModalDelivered extends Component {
   state = {
     count: 0,
   };
   openWindow = async () => {
     await this.props.close();
   };
-  moveToDistribution = async (e) => {
+  finishDelivery = async (e) => {
     e.preventDefault();
-    await this.props.moveToDistribution(this.state.count);
-    await this.openWindow();
+    await this.props.finishDelivery(this.state.count);
   };
   onInputChange = (e) => {
     this.setState({
@@ -20,13 +19,13 @@ export default class ModalCount extends Component {
   };
   render() {
     return (
-      <>
+      <div>
         <Modal show={this.props.open} onHide={this.openWindow}>
           <Modal.Header closeButton>
-            <Modal.Title>Escoga la cantidad</Modal.Title>
+            <Modal.Title>Ingrese la cantidad entregada</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <form className="form-inline" onSubmit={this.moveToDistribution}>
+            <form className="form-inline" onSubmit={this.finishDelivery}>
               <div className="form-group mx-sm-3 mb-2">
                 <label htmlFor="inputCount" className="sr-only">
                   Cantidad
@@ -46,7 +45,7 @@ export default class ModalCount extends Component {
             </form>
           </Modal.Body>
         </Modal>
-      </>
+      </div>
     );
   }
 }

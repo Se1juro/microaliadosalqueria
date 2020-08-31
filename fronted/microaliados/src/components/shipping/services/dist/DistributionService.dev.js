@@ -49,7 +49,7 @@ distributionService.getDistribution = function _callee(userId) {
 };
 
 distributionService.moveToDistribution = function _callee2(idUser, product, count, idInventario) {
-  var cantidad, data;
+  var cantidad, data, res;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -65,19 +65,62 @@ distributionService.moveToDistribution = function _callee2(idUser, product, coun
             },
             codigoInventario: idInventario
           };
-          console.log(data);
-          _context2.next = 9;
-          break;
+          res = _axios["default"].post('http://localhost:4000/distribucion/', data, {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          })["catch"](function (err) {
+            return err.response;
+          });
+          return _context2.abrupt("return", res);
 
-        case 6:
-          _context2.prev = 6;
+        case 7:
+          _context2.prev = 7;
           _context2.t0 = _context2["catch"](0);
           return _context2.abrupt("return", _context2.t0);
 
-        case 9:
+        case 10:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 6]]);
+  }, null, null, [[0, 7]]);
+};
+
+distributionService.finishDelivery = function _callee3(idUser, product, idInventario, count) {
+  var cantidad, data, res;
+  return regeneratorRuntime.async(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.prev = 0;
+          cantidad = parseInt(count);
+          data = {
+            codigoUsuario: idUser,
+            codigoInventario: idInventario,
+            productos: [{
+              id: product.id,
+              cantidad: cantidad
+            }]
+          };
+          res = _axios["default"].put('http://localhost:4000/distribucion/', data, {
+            headers: {
+              Authorization: 'Bearer ' + state.token
+            }
+          })["catch"](function (err) {
+            return err.response;
+          });
+          return _context3.abrupt("return", res);
+
+        case 7:
+          _context3.prev = 7;
+          _context3.t0 = _context3["catch"](0);
+          return _context3.abrupt("return", _context3.t0);
+
+        case 10:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
 };
