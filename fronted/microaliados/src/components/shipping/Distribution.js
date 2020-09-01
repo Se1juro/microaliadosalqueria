@@ -9,6 +9,7 @@ import { faTruckLoading } from '@fortawesome/free-solid-svg-icons';
 import ModalDelivered from './ModalDelivered';
 import jwt from 'jsonwebtoken';
 import { userService } from '../users/services/userServices';
+import moment from 'moment-timezone';
 
 export default class Distribution extends Component {
   state = {
@@ -22,6 +23,7 @@ export default class Distribution extends Component {
     reloadData: false,
     currentProductDelivery: {},
     token: localStorage.getItem('token'),
+    hourDelivery: undefined,
   };
   async componentDidMount() {
     const token = jwt.decode(this.state.token);
@@ -33,6 +35,10 @@ export default class Distribution extends Component {
       });
     }
     await this.getDistribution();
+    let fecha = this.state.hourDelivery;
+    let horaMoment = moment(fecha);
+    let horabuena = horaMoment.tz('America/Bogota').format('LLL');
+    this.setState({ hourDelivery: horabuena });
   }
   openModalAndGetDataOfInventory = async (product, inventoryId) => {
     await this.setState({
@@ -66,10 +72,12 @@ export default class Distribution extends Component {
 
   getDistribution = async () => {
     const res = await distributionService.getDistribution(this.state.userId);
+
     if (res.data.distribution.length !== 0) {
       await this.setState({
         productsInShipping: res.data.distribution[0].productos,
         loading: false,
+        hourDelivery: res.data.distribution[0].horaSalida,
       });
     }
   };
@@ -125,6 +133,7 @@ export default class Distribution extends Component {
           <div className="card">
             <div className="card-header">
               <h3>Productos en distribución</h3>
+              <h6>Hora de salida: {this.state.hourDelivery}</h6>
             </div>
             <div className="card-body">
               <h5 className="card-title">Productos</h5>

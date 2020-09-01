@@ -1,16 +1,85 @@
 const distribucionModel = require('../models/distribucionModel');
 const inventarioModel = require('../models/inventarioModel');
-const usuarioModel = require('../models/usuarioModel');
 const inventarioVendedorController = {};
+subtractQuantityFromInventory = async (
+  codigoUsuario,
+  codigoProducto,
+  cantidadProducto
+) => {
+  await inventarioModel.findOneAndUpdate(
+    {
+      codigoUsuario: codigoUsuario,
+      'productos.id': codigoProducto,
+    },
+    {
+      $inc: { 'productos.$.cantidad': -cantidadProducto },
+    }
+  );
+};
 inventarioVendedorController.moveToDistribution = async (req, res, next) => {
   try {
+    let operation;
     const data = {
       codigoUsuario: req.body.codigoUsuario,
       productos: req.body.productos,
       horaSalida: Date.now(),
       codigoInventario: req.body.codigoInventario,
     };
-    console.log(data);
+    const findDistribution = await distribucionModel.findOne({
+      codigoUsuario: data.codigoUsuario,
+    });
+
+    if (!findDistribution) {
+      const distribution = new distribucionModel({
+        codigoUsuario: data.codigoUsuario,
+        productos: data.productos,
+        codigoInventario: data.codigoInventario,
+        horaSalida: data.horaSalida,
+      });
+      await distribution.save();
+      return res.status(200).json({
+        status: 'Success',
+        message: 'Se creo y se actualizo su distribucion',
+      });
+    }
+    const findProductInDelivery = await distribucionModel.findOne({
+      codigoUsuario: data.codigoUsuario,
+      'productos.id': data.productos.id,
+    });
+    if (!findProductInDelivery) {
+      operation = await distribucionModel.findOneAndUpdate(
+        {
+          codigoUsuario: data.codigoUsuario,
+        },
+        {
+          $push: {
+            productos: data.productos,
+          },
+        }
+      );
+      await subtractQuantityFromInventory(
+        data.codigoUsuario,
+        data.productos.id,
+        data.productos.cantidad
+      );
+    } else {
+      operation = await distribucionModel.updateOne(
+        {
+          codigoUsuario: data.codigoUsuario,
+          'productos.id': data.productos.id,
+        },
+        { $inc: { 'productos.$.cantidad': data.productos.cantidad } }
+      );
+      await subtractQuantityFromInventory(
+        data.codigoUsuario,
+        data.productos.id,
+        data.productos.cantidad
+      );
+    }
+    return res.status(200).json({
+      status: 'Success',
+      message: 'Se ha movido el producto a distribucion',
+    });
   } catch (error) {
     next(error);
   }
