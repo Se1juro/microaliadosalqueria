@@ -6,10 +6,16 @@ require('./database');
 //REQUERIMOS LA CONFIGURACION PARA EL SERVIDORS
 const config = require('./settings');
 const router = require('./router');
+const path = require('path');
 
 //CARGAR CONFIGURACION DENTRO DEL SERVIDOR
 config(app);
 router(app);
+app.use(express.static(__dirname + '/frontend'));
+app.get('*', function (req, res) {
+  const index = path.join(__dirname, 'frontend', 'index.html');
+  res.sendFile(index);
+});
 //INICIAMOS SERVIDOR
 app.listen(process.env.PORT || port, () => {
   console.log('Server on port ' + port);

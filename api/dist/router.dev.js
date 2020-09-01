@@ -13,12 +13,12 @@ var distribucion = require('./routes/rutasDistribucion');
 var contact = require('./routes/rutasContact');
 
 function rutas(app) {
-  app.use('/productos', productos);
-  app.use('/usuarios', usuarios);
-  app.use('/login', login);
-  app.use('/inventario', inventario);
-  app.use('/distribucion', distribucion);
-  app.use('/contact', contact);
+  app.use('/api/productos', productos);
+  app.use('/api/usuarios', usuarios);
+  app.use('/api/login', login);
+  app.use('/api/inventario', inventario);
+  app.use('/api/distribucion', distribucion);
+  app.use('/api/contact', contact);
 }
 
 module.exports = rutas;
