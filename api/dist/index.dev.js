@@ -23,7 +23,8 @@ app.use(express["static"](__dirname + '/frontend'));
 app.get('*', function (req, res) {
   var index = path.join(__dirname, 'frontend', 'index.html');
   res.sendFile(index);
-}); //INICIAMOS SERVIDOR
+});
+if (process.env.NODE_ENV !== 'production') require('dotenv').config(); //INICIAMOS SERVIDOR
 
 app.listen(process.env.PORT || port, function () {
   console.log('Server on port ' + port);

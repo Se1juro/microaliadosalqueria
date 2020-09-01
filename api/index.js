@@ -16,6 +16,9 @@ app.get('*', function (req, res) {
   const index = path.join(__dirname, 'frontend', 'index.html');
   res.sendFile(index);
 });
+
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+
 //INICIAMOS SERVIDOR
 app.listen(process.env.PORT || port, () => {
   console.log('Server on port ' + port);
