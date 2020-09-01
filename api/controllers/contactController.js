@@ -17,7 +17,7 @@ contactController.sendEmail = async (req, res, next) => {
       service: 'gmail',
       auth: {
         user: 'daniel.msweb@gmail.com',
-        pass: '990711daniel',
+        pass: 'xxxx',
       },
     });
     const mailOptions = {

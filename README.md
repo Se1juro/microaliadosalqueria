@@ -18,6 +18,8 @@ Este sistema esta diseñado para los clientes que anteriormente organizaban sus 
 # SCREENS
 
 ![LIST PRODUCTS](https://github.com/Se1juro/microaliadosalqueria/blob/master/screens/Screenshot_1.png?raw=true)
+![HOME](https://github.com/Se1juro/microaliadosalqueria/blob/master/screens/home.png?raw=true)
+![DELIVERY](https://github.com/Se1juro/microaliadosalqueria/blob/master/screens/distribucion.png?raw=true)
 
 # NOTA
 Se manejan dos variables de entorno a la fecha, las cuales son DB_URI y SECRETKEY, puedes asignarle el valor que tu quieras, DB_URI hace referencia a la URI de la BD de mongodb.
