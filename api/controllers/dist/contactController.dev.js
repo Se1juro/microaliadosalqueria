@@ -1,6 +1,7 @@
 "use strict";
 
 var contactController = {};
+var password = process.env.PASSWORD_EMAIL;
 
 var nodemailer = require('nodemailer');
 
@@ -20,7 +21,7 @@ contactController.sendEmail = function _callee(req, res, next) {
             service: 'gmail',
             auth: {
               user: 'daniel.msweb@gmail.com',
-              pass: '990711daniel'
+              pass: password
             }
           });
           mailOptions = {

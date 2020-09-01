@@ -1,4 +1,5 @@
 const contactController = {};
+const password = process.env.PASSWORD_EMAIL;
 const nodemailer = require('nodemailer');
 contactController.sendEmail = async (req, res, next) => {
   try {
@@ -17,7 +18,7 @@ contactController.sendEmail = async (req, res, next) => {
       service: 'gmail',
       auth: {
         user: 'daniel.msweb@gmail.com',
-        pass: 'xxxx',
+        pass: password,
       },
     });
     const mailOptions = {
