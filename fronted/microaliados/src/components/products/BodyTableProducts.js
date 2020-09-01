@@ -15,6 +15,7 @@ class BodyTableProducts extends Component {
     productSelected: {},
     countProduct: 0,
   };
+
   formatProductDescription = (productDescription) => {
     if (productDescription.length > 15) {
       return productDescription.substr(0, 10) + '...';
@@ -32,12 +33,13 @@ class BodyTableProducts extends Component {
     let res;
     let addingExistingProduct = false;
     let codeProductSelected = this.state.productSelected.codigoReferencia;
-    this.props.productsToFilter.forEach((product) => {
-      if (product.id === codeProductSelected) {
-        addingExistingProduct = true;
-      }
-    });
-    console.log(addingExistingProduct);
+    if (this.props.productsToFilter) {
+      this.props.productsToFilter.forEach((product) => {
+        if (product.id === codeProductSelected) {
+          addingExistingProduct = true;
+        }
+      });
+    }
     if (addingExistingProduct) {
       res = await inventoryServices.increaseStock(
         this.props.inventoryId._id,
@@ -62,8 +64,8 @@ class BodyTableProducts extends Component {
     } else {
       await Swal.fire({
         icon: 'error',
-        title: 'Algo salio mal',
-        text: 'No pudimos agregar tu producto',
+        title: res.data.status,
+        text: res.data.mensaje,
         timer: 5000,
       });
     }
@@ -81,6 +83,7 @@ class BodyTableProducts extends Component {
   };
 
   componentDidMount() {
+    console.log(this.props);
     const token = jwt.decode(localStorage.getItem('token'));
     if (token.rol === 'admin') {
       this.setState({ isAdmin: true });
@@ -123,7 +126,7 @@ class BodyTableProducts extends Component {
                   </Link>
                 </td>
               ) : null}
-              {this.state.isMicroAlly ? (
+              {this.state.isMicroAlly && this.props.inventoryId ? (
                 <td>
                   <button
                     className="btn btn-primary"

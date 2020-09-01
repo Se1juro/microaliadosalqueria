@@ -121,15 +121,15 @@ inventoryServices.increaseStock = async (
         },
       ],
     };
-    const res = await axios.put(
-      `http://localhost:4000/inventario/agregar/${idInventario}`,
-      data,
-      {
+    const res = await axios
+      .put(`http://localhost:4000/inventario/agregar/${idInventario}`, data, {
         headers: {
           Authorization: 'Bearer ' + state.token,
         },
-      }
-    );
+      })
+      .catch((err) => {
+        return err.response;
+      });
     return res;
   } catch (error) {
     return error;

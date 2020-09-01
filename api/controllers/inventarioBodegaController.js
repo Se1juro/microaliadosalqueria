@@ -11,6 +11,12 @@ inventarioController.getInventarioByUser = async (req, res, next) => {
     const inventario = await inventarioModel.find({
       codigoUsuario: codigoUsuario,
     });
+    if (inventario.length < 1) {
+      return res.status(409).json({
+        status: 'Error',
+        message: 'No se pudo encontrar el inventario',
+      });
+    }
     const mapProducts = inventario[0].productos;
     const productosArray = [];
     mapProducts.forEach((element) => {

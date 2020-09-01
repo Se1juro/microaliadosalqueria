@@ -33,6 +33,18 @@ inventarioController.getInventarioByUser = function _callee(req, res, next) {
 
         case 5:
           inventario = _context.sent;
+
+          if (!(inventario.length < 1)) {
+            _context.next = 8;
+            break;
+          }
+
+          return _context.abrupt("return", res.status(409).json({
+            status: 'Error',
+            message: 'No se pudo encontrar el inventario'
+          }));
+
+        case 8:
           mapProducts = inventario[0].productos;
           productosArray = [];
           mapProducts.forEach(function (element) {
@@ -51,17 +63,17 @@ inventarioController.getInventarioByUser = function _callee(req, res, next) {
             itemForPage: limit
           }));
 
-        case 16:
-          _context.prev = 16;
+        case 18:
+          _context.prev = 18;
           _context.t0 = _context["catch"](0);
           next(_context.t0);
 
-        case 19:
+        case 21:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 16]]);
+  }, null, null, [[0, 18]]);
 };
 
 inventarioController.crearInventario = function _callee2(req, res, next) {

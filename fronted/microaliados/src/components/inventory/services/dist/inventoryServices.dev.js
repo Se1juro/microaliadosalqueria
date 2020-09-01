@@ -175,6 +175,8 @@ inventoryServices.increaseStock = function _callee4(idInventario, idUser, codePr
             headers: {
               Authorization: 'Bearer ' + state.token
             }
+          })["catch"](function (err) {
+            return err.response;
           }));
 
         case 5:

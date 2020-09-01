@@ -30,15 +30,17 @@ export default class Distribution extends Component {
     const rol = token.rol;
     if (rol === 'vendedor') {
       const seller = await userService.searchByCode(token.codigoReferencia);
-      await this.setState({
-        userId: seller.resultado.codigoMicroaliadoEncargado,
-      });
+      if (seller.resultado.codigoMicroaliadoEncargado) {
+        await this.setState({
+          userId: seller.resultado.codigoMicroaliadoEncargado,
+        });
+      }
     }
     await this.getDistribution();
     let fecha = this.state.hourDelivery;
     let horaMoment = moment(fecha);
     let horabuena = horaMoment.tz('America/Bogota').format('LLL');
-    this.setState({ hourDelivery: horabuena });
+    await this.setState({ hourDelivery: horabuena });
   }
   openModalAndGetDataOfInventory = async (product, inventoryId) => {
     await this.setState({
@@ -72,7 +74,6 @@ export default class Distribution extends Component {
 
   getDistribution = async () => {
     const res = await distributionService.getDistribution(this.state.userId);
-
     if (res.data.distribution.length !== 0) {
       await this.setState({
         productsInShipping: res.data.distribution[0].productos,

@@ -11,6 +11,7 @@ import SelectPagination from '../pagination/SelectPagination';
 import ManageProduct from './ManageProduct';
 import jwt from 'jsonwebtoken';
 import { userService } from '../users/services/userServices';
+import { Redirect } from 'react-router-dom';
 class Inventory extends Component {
   state = {
     products: [],
@@ -33,7 +34,7 @@ class Inventory extends Component {
   };
 
   async componentDidMount() {
-    const token = jwt.decode(this.state.token);
+    const token = await jwt.decode(this.state.token);
     const rol = token.rol;
     if (rol === 'vendedor') {
       const seller = await userService.searchByCode(token.codigoReferencia);
@@ -44,7 +45,9 @@ class Inventory extends Component {
     await this.getInventory();
     this.fixCardWidth();
     if (this.props.loadInventoryId) {
-      await this.props.loadInventoryId(this.state.inventory[0]._id);
+      if (this.state.inventory.length > 0) {
+        await this.props.loadInventoryId(this.state.inventory[0]._id);
+      }
     }
   }
   async componentDidUpdate(prevProps) {
@@ -84,14 +87,18 @@ class Inventory extends Component {
           }
         }
       }
-      this.setState({
-        productsToFilter: res.inventario[0].productos || [],
-        products: res.productsToFront,
-        inventory: res.inventario,
-        loadingData: false,
-        totalPage: res.totalPages,
-        countSelect: res.totalDocuments,
-      });
+      if (res.status === 'Error') {
+        return <Redirect to="/"></Redirect>;
+      } else {
+        this.setState({
+          productsToFilter: res.inventario[0].productos || [],
+          products: res.productsToFront,
+          inventory: res.inventario,
+          loadingData: false,
+          totalPage: res.totalPages,
+          countSelect: res.totalDocuments,
+        });
+      }
 
       this.generatePagination();
     }
