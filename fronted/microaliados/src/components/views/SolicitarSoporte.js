@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Admin from '../../img/member.svg';
-import { Link } from 'react-router-dom';
+import { HashLink as Link } from 'react-router-hash-link';
 export default class SolicitarSoporte extends Component {
   render() {
     return (
@@ -21,10 +21,7 @@ export default class SolicitarSoporte extends Component {
         <Link
           className="btn btn-primary btn-block"
           style={{ marginTop: '40px' }}
-          to={{
-            pathname: '/',
-            hash: '#contact',
-          }}
+          to="/#contact"
         >
           Solicitar Soporte
         </Link>
