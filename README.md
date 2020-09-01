@@ -22,4 +22,4 @@ Este sistema esta diseñado para los clientes que anteriormente organizaban sus 
 ![DELIVERY](https://github.com/Se1juro/microaliadosalqueria/blob/master/screens/distribucion.png?raw=true)
 
 # NOTA
-Se manejan dos variables de entorno a la fecha, las cuales son DB_URI y SECRETKEY, puedes asignarle el valor que tu quieras, DB_URI hace referencia a la URI de la BD de mongodb.
+Se manejan tres variables de entorno a la fecha, las cuales son DB_URI y SECRETKEY, PASSWORD_EMAIL puedes asignarle el valor que tu quieras, DB_URI hace referencia a la URI de la BD de mongodb.
