@@ -8,7 +8,7 @@ contactService.sendEmail = async (name, email, message) => {
       email: email,
       mensaje: message,
     };
-    const res = Axios.post('http://localhost:4000/contact/', data);
+    const res = Axios.post('/api/contact/', data);
     return res;
   } catch (error) {
     return error;
